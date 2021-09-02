@@ -1,3 +1,4 @@
+![alt text](https://github.com/netervati/space-distortion/blob/main/demo/demo-01.gif?raw=true)
 # Space Distortion
 Space Distortion is a survival game set in the far distant space where your ship encountered a supermassive blackhole due to a collision of two stars. You must drive your ship away from its gravitational pull. But, beware! As the black hole is growing, objects are being absorbed and will hinder your escape.
 
@@ -5,6 +6,8 @@ Space Distortion is a survival game set in the far distant space where your ship
 - A - Move Left
 - D - Move Right
 - S - Activate Force Field
+
+![alt text](https://github.com/netervati/space-distortion/blob/main/demo/demo-02.gif?raw=true)
 
 ## Release Notes
 - Desktop Installation
