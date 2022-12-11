@@ -12,7 +12,7 @@ type SFXKeys = 'gammaRay' | 'dissipate' | 'shield' | 'explosion'
                 | 'disintegrate' | 'warning' | 'bgm';
 type SFXMap = { [key in SFXKeys]: HTMLAudioElement; }
 
-const SFX: SFXMap = {
+export const SFX: SFXMap = {
     gammaRay: loadAudio('gamma-wave.mp3'),
     dissipate: loadAudio('gamma-dissipate.mp3'),
     shield : loadAudio('shield.mp3'),
