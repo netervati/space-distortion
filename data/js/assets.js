@@ -1,17 +1,15 @@
-const SFX = {
-    gammaRay: new Audio(),
-    dissipate: new Audio(),
-    shield : new Audio(),
-    explosion: new Audio(),
-    disintegrate: new Audio(),
-    warning: new Audio(),
-    bgm: new Audio()
-}
-let sfxDir = "data/sfx/";
-SFX["gammaRay"].src = sfxDir+"gamma-wave.mp3";
-SFX["shield"].src = sfxDir+"shield.mp3";
-SFX["dissipate"].src = sfxDir+"gamma-dissipate.mp3";
-SFX["explosion"].src = sfxDir+"explosion.mp3";
-SFX["disintegrate"].src = sfxDir+"disintegrate.mp3";
-SFX["warning"].src = sfxDir+"warning.mp3";
-SFX["bgm"].src = "data/Chill In the Space.mp3";
+var loadAudio = function (file, dir) {
+    if (dir === void 0) { dir = 'data/sfx/'; }
+    var audio = new Audio();
+    audio.src = "" + dir + file;
+    return audio;
+};
+export var SFX = {
+    gammaRay: loadAudio('gamma-wave.mp3'),
+    dissipate: loadAudio('gamma-dissipate.mp3'),
+    shield: loadAudio('shield.mp3'),
+    explosion: loadAudio('explosion.mp3'),
+    disintegrate: loadAudio('disintegrate.mp3'),
+    warning: loadAudio('warning.mp3'),
+    bgm: loadAudio('Chill In the Space.mp3', 'data/'),
+};

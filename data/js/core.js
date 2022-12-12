@@ -1,14 +1,10 @@
-/** Ahh! Spaghetti Code! */
+import setStage from './stage.js';
+import { SFX } from './assets.js';
+
+
 class Netervati{
     constructor(){
-        document.body.style.margin = 0;
-        document.body.style.backgroundColor = "black";
-        this._canvas = document.createElement("canvas");
-        this._canvas.style.cssText = "position: fixed;left: 50%;top: 50%;transform: translate(-50%, -50%);border: 3px solid white";
-        this._canvas.width = 700;
-        this._canvas.height = 650;
-        this._canvas.style.backgroundColor = "#06030B";
-        document.body.appendChild(this._canvas);
+        this._canvas = setStage();
         this._ctx = this._canvas.getContext("2d");
 
         this._allowStart = 0;
@@ -773,3 +769,6 @@ class Netervati{
 
     }
 }
+
+export default Netervati;
+
