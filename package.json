@@ -1,0 +1,27 @@
+{
+  "name": "space-distortion",
+  "version": "1.0.0",
+  "description": "A survival game set in the far distant space where your ship encountered a supermassive blackhole due to a collision of two stars",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netervati/space-distortion.git"
+  },
+  "keywords": [
+    "javascript",
+    "game",
+    "html5-canvas"
+  ],
+  "author": "Christopher Tabula",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/netervati/space-distortion/issues"
+  },
+  "homepage": "https://github.com/netervati/space-distortion#readme",
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  }
+}
