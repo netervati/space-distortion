@@ -1,5 +1,5 @@
 import setStage from './stage.js';
-import { SFX } from './assets.js';
+import { IMG, SFX } from './assets.js';
 
 
 class Netervati{
@@ -49,27 +49,6 @@ class Netervati{
         this._gammaRayExpansion = 0;
         this._gammaRayDissipate = 0;
         this._gammaRayParticleSpread = 200;
-
-        this._numbers = document.createElement("img");
-        this._numbers.src = "data/img/number.png";
-        this._restart = document.createElement("img");
-        this._restart.src = "data/img/restart.png";
-        this._begin = document.createElement("img");
-        this._begin.src = "data/img/begin.png";
-        this._warning = document.createElement("img");
-        this._warning.src = "data/img/warning.png"
-        this._introa = document.createElement("img");
-        this._introa.src = "data/img/introa.png"
-        this._introb = document.createElement("img");
-        this._introb.src = "data/img/introb.png"
-        this._introc = document.createElement("img");
-        this._introc.src = "data/img/introc.png"
-        this._end = document.createElement("img");
-        this._end.src = "data/img/end.png"
-        this._title = document.createElement("img");
-        this._title.src = "data/img/title.png";
-        this._thanks = document.createElement("img");
-        this._thanks.src = "data/img/thanks.png";
 
         this.update();
     }
@@ -682,23 +661,23 @@ class Netervati{
             this._ctx.shadowBlur = 10;
             this._ctx.globalAlpha = this._gameStart == 1 ? 1 : 0;
             this._ctx.shadowColor = "white";
-            this._ctx.drawImage(this._numbers, stringNum.charAt(i) * 9, 0, 9, 9, fontXmargin, 30, 24, 24);
+            this._ctx.drawImage(IMG.numbers, stringNum.charAt(i) * 9, 0, 9, 9, fontXmargin, 30, 24, 24);
             this._ctx.restore();
         }
         
         if (this._playerDead == 1){
-            this._ctx.drawImage(this._restart, 0, 0, 112, 9, (this._canvas.width / 2) - 112, (this._canvas.height / 2) - 9, 218, 16);
+            this._ctx.drawImage(IMG.restart, 0, 0, 112, 9, (this._canvas.width / 2) - 112, (this._canvas.height / 2) - 9, 218, 16);
         }
 
         if (this._loadCutscene == 0){
-            this._ctx.drawImage(this._title, 0, 0, 186, 22, (this._canvas.width / 2) - 186, (this._canvas.height / 2) - 50, 372, 44);
-            this._ctx.drawImage(this._begin, 0, 0, 125, 9, (this._canvas.width / 2) - 125, (this._canvas.height / 2) + 10, 250, 16);
+            this._ctx.drawImage(IMG.title, 0, 0, 186, 22, (this._canvas.width / 2) - 186, (this._canvas.height / 2) - 50, 372, 44);
+            this._ctx.drawImage(IMG.begin, 0, 0, 125, 9, (this._canvas.width / 2) - 125, (this._canvas.height / 2) + 10, 250, 16);
         }
 
         if (this._initialCutscene >= 100 && this._initialCutscene < 188){
             this._ctx.save();
             this._ctx.globalAlpha = this._warningCurAlpha;
-            this._ctx.drawImage(this._warning, 0, 0, 56, 18, (this._canvas.width / 2) - 56, (this._canvas.height / 2) - 9, 112, 40);
+            this._ctx.drawImage(IMG.warning, 0, 0, 56, 18, (this._canvas.width / 2) - 56, (this._canvas.height / 2) - 9, 112, 40);
             this._ctx.restore();
         }
         
@@ -714,7 +693,7 @@ class Netervati{
             else{
                 frameCount = 258;
             }
-            this._ctx.drawImage(this._introa, 0, 0, 9 * (frameCount + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCount + 1)) * 2, 40);
+            this._ctx.drawImage(IMG.introa, 0, 0, 9 * (frameCount + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCount + 1)) * 2, 40);
         }
 
         if (this._initialCutscene >= 360 && this._initialCutscene < 470){
@@ -729,7 +708,7 @@ class Netervati{
             else{
                 frameCountB = 470;
             }
-            this._ctx.drawImage(this._introb, 0, 0, 9 * (frameCountB + 1), 26, (this._canvas.width / 2) - 141, (this._canvas.height / 2) - 13, (9 * (frameCountB + 1)) * 2, 40);
+            this._ctx.drawImage(IMG.introb, 0, 0, 9 * (frameCountB + 1), 26, (this._canvas.width / 2) - 141, (this._canvas.height / 2) - 13, (9 * (frameCountB + 1)) * 2, 40);
         }
 
         if (this._initialCutscene >= 480 && this._initialCutscene < 600){
@@ -744,7 +723,7 @@ class Netervati{
             else{
                 frameCountC = 600;
             }
-            this._ctx.drawImage(this._introc, 0, 0, 9 * (frameCountC + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCountC + 1)) * 2, 40);
+            this._ctx.drawImage(IMG.introc, 0, 0, 9 * (frameCountC + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCountC + 1)) * 2, 40);
         }
 
         if (this._gameOver == 1){
@@ -760,10 +739,10 @@ class Netervati{
                 else{
                     frameCountD = 100;
                 }
-                this._ctx.drawImage(this._end, 0, 0, 9 * (frameCountD + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCountD + 1)) * 2, 40);
+                this._ctx.drawImage(IMG.end, 0, 0, 9 * (frameCountD + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCountD + 1)) * 2, 40);
             }
             if (this._endingCutscene >= 150){
-                this._ctx.drawImage(this._thanks, 0, 0, 120, 26, (this._canvas.width / 2) - 120, (this._canvas.height / 2) - 9, 240, 40);
+                this._ctx.drawImage(IMG.thanks, 0, 0, 120, 26, (this._canvas.width / 2) - 120, (this._canvas.height / 2) - 9, 240, 40);
             }
         }
 

@@ -4,6 +4,11 @@ var loadAudio = function (file, dir) {
     audio.src = "" + dir + file;
     return audio;
 };
+var loadImage = function (file) {
+    var img = document.createElement("img");
+    img.src = "data/img/" + file;
+    return img;
+};
 export var SFX = {
     gammaRay: loadAudio('gamma-wave.mp3'),
     dissipate: loadAudio('gamma-dissipate.mp3'),
@@ -12,4 +17,16 @@ export var SFX = {
     disintegrate: loadAudio('disintegrate.mp3'),
     warning: loadAudio('warning.mp3'),
     bgm: loadAudio('Chill In the Space.mp3', 'data/'),
+};
+export var IMG = {
+    numbers: loadImage('number.png'),
+    restart: loadImage('restart.png'),
+    begin: loadImage('begin.png'),
+    warning: loadImage('warning.png'),
+    introa: loadImage('introa.png'),
+    introb: loadImage('introb.png'),
+    introc: loadImage('introc.png'),
+    end: loadImage('end.png'),
+    title: loadImage('title.png'),
+    thanks: loadImage('thanks.png'),
 };
