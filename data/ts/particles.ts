@@ -1,10 +1,12 @@
+type TwoDimensionalArray = Array<Array<number>>
+
 export default class Particles {
-    starPositions: Array<Array<number>>;
-    __defaultShipBoosters: Array<Array<number>>
-    __defaultShipExplosions: Array<Array<number>>
-    shipBoosters: Array<Array<number>>
-    shipExplosions: Array<Array<number>>
- 
+    __defaultShipBoosters: TwoDimensionalArray;
+    __defaultShipExplosions: TwoDimensionalArray;
+    shipBoosters: TwoDimensionalArray;
+    shipExplosions: TwoDimensionalArray;
+    starPositions: TwoDimensionalArray;
+
     constructor(playerX: number) {
         this.starPositions = [
             [100, 20],
@@ -32,18 +34,18 @@ export default class Particles {
         ];
 
         this.__defaultShipExplosions = [
-            [25,40,75,68,3,1,68,40,50,1],
-            [12,30,70,63,3,1,63,38,45,1],
-            [8,50,73,65,3,1,65,40,47,1],
-            [30,30,72,64,3,1,64,39,46,1],
-            [45,50,65,56,3,1,56,45,50,1],
-            [18,40,65,55,1,0,55,38,43,0.75],
-            [35,50,60,50,1,0,50,32,37,0.30],
-            [40,20,63,53,1,0,53,36,41,0.75],
-            [0,4,58,48,1,0,48,30,35,0.30],
-            [25,15,66,56,1,0,56,39,44,0.75],
-            [-10,58,60,50,1,0,50,35,40,0.30],
-            [-5,30,62,52,1,0,52,37,46,0.75]
+            [25, 40, 75, 68, 3, 1, 68, 40, 50, 1],
+            [12, 30, 70, 63, 3, 1, 63, 38, 45, 1],
+            [8, 50, 73, 65,3, 1, 65, 40, 47, 1],
+            [30, 30, 72, 64, 3, 1, 64, 39, 46, 1],
+            [45, 50, 65, 56, 3, 1, 56, 45, 50, 1],
+            [18, 40, 65, 55, 1, 0, 55, 38, 43, 0.75],
+            [35, 50, 60, 50, 1, 0, 50, 32, 37, 0.30],
+            [40, 20, 63, 53, 1, 0, 53, 36, 41, 0.75],
+            [0, 4, 58, 48, 1, 0, 48, 30, 35, 0.30],
+            [25, 15, 66, 56, 1, 0, 56, 39, 44, 0.75],
+            [-10, 58, 60, 50, 1, 0, 50, 35, 40, 0.30],
+            [-5, 30, 62, 52, 1, 0, 52, 37, 46, 0.75]
         ];
         
         this.shipBoosters = this.__defaultShipBoosters;
@@ -158,6 +160,7 @@ export default class Particles {
 
     reset() {
         this.shipBoosters = this.__defaultShipBoosters;
+        this.shipExplosions = this.__defaultShipExplosions;
     }
 }
 

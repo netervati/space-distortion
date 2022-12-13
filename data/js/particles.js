@@ -124,6 +124,7 @@ var Particles = /** @class */ (function () {
     };
     Particles.prototype.reset = function () {
         this.shipBoosters = this.__defaultShipBoosters;
+        this.shipExplosions = this.__defaultShipExplosions;
     };
     return Particles;
 }());
