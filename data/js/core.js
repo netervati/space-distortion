@@ -1,3 +1,4 @@
+import Particles from './particles.js';
 import setStage from './stage.js';
 import { IMG, SFX } from './assets.js';
 
@@ -28,11 +29,9 @@ class Netervati{
         this._distance = 0;
         this._distanceMilestone = 100;
 
+        this._particles = new Particles(this._playerX);
         this._curveTransitionPoints = [[100,0,1],[50,1,0],[25,1,0],[60,1,1]];
         this._curveIn = 100;
-        this._starPositions = [[100,20],[400,500],[600,120],[300,640],[130,600],[210,300],[425,360],[600,1],[340,200]];
-        this._shipBoosters = [[this._playerX,12,15,35,17],[this._playerX,5,15,35,15],[this._playerX,18,15,45,18],[this._playerX,1,10,40,13],[this._playerX,1,12,50,15],[this._playerX,1,20,25,14],[this._playerX,1,20,20,13],[this._playerX,1,20,20,13],[this._playerX,1,18,17,20],[this._playerX,1,20,20,10]];
-        this._shipExplosions = [[25,40,75,68,3,1,68,40,50,1],[12,30,70,63,3,1,63,38,45,1],[8,50,73,65,3,1,65,40,47,1],[30,30,72,64,3,1,64,39,46,1],[45,50,65,56,3,1,56,45,50,1],[18,40,65,55,1,0,55,38,43,0.75],[35,50,60,50,1,0,50,32,37,0.30],[40,20,63,53,1,0,53,36,41,0.75],[0,4,58,48,1,0,48,30,35,0.30],[25,15,66,56,1,0,56,39,44,0.75],[-10,58,60,50,1,0,50,35,40,0.30],[-5,30,62,52,1,0,52,37,46,0.75]];
 
         this._asteroid = [];
         this._asteroidSummon = 300;
@@ -57,6 +56,8 @@ class Netervati{
         this._allowStart = 1;
     }
     reload(){
+        this._particles.reset();
+
         this._asteroid = [];
         this._asteroidSummon = 300;
         this._asteroidSummonBasis = 300;
@@ -83,8 +84,6 @@ class Netervati{
         this._playerDead = 0;
         this._distance = 0;
         this._distanceMilestone = 100;
-        this._shipBoosters = [[this._playerX,12,15,35,17],[this._playerX,5,15,35,15],[this._playerX,18,15,45,18],[this._playerX,1,10,40,13],[this._playerX,1,12,50,15],[this._playerX,1,20,25,14],[this._playerX,1,20,20,13],[this._playerX,1,20,20,13],[this._playerX,1,18,17,20],[this._playerX,1,20,20,10]];
-        this._shipExplosions = [[25,40,75,68,3,1,68,40,50,1],[12,30,70,63,3,1,63,38,45,1],[8,50,73,65,3,1,65,40,47,1],[30,30,72,64,3,1,64,39,46,1],[45,50,65,56,3,1,56,45,50,1],[18,40,65,55,1,0,55,38,43,0.75],[35,50,60,50,1,0,50,32,37,0.30],[40,20,63,53,1,0,53,36,41,0.75],[0,4,58,48,1,0,48,30,35,0.30],[25,15,66,56,1,0,56,39,44,0.75],[-10,58,60,50,1,0,50,35,40,0.30],[-5,30,62,52,1,0,52,37,46,0.75]];
         SFX["gammaRay"].pause();
         SFX["gammaRay"].currentTime = 0;
     }
@@ -130,39 +129,8 @@ class Netervati{
                 this._curveTransitionPoints[tx][1] == 1 ? this._curveTransitionPoints[tx][1] = 0 : this._curveTransitionPoints[tx][1] = 1;
             }
         }
-        let starPositionsLength = this._starPositions.length;
-        for (let sp = 0; sp < starPositionsLength; sp++){
-            if (this._starPositions[sp][1] + 8 < this._canvas.height){
-                this._starPositions[sp][1] += 8;
-                continue;
-            }
-            else if (this._starPositions[sp][1] == this._canvas.height){
-                this._starPositions[sp][1] = 0;
-                continue;
-            }
-            else{
-                this._starPositions[sp][1] = this._canvas.height;
-                continue;
-            }
-        }
-        let shipBoostersLength = this._shipBoosters.length;
-        for (let pb = 0; pb < shipBoostersLength; pb++){
-            if (this._shipBoosters[pb][0] < (this._playerX + this._shipBoosters[pb][4]) - 25 || this._shipBoosters[pb][0] > (this._playerX + this._shipBoosters[pb][4]) + 15){
-                (this._playerX + this._shipBoosters[pb][4]) > this._shipBoosters[pb][0] ? this._shipBoosters[pb][0] += 7 : this._shipBoosters[pb][0] -= 7;
-            }
-            else if (this._shipBoosters[pb][0] < (this._playerX + this._shipBoosters[pb][4]) - 15 || this._shipBoosters[pb][0] > (this._playerX + this._shipBoosters[pb][4]) + 5){
-                (this._playerX + this._shipBoosters[pb][4]) > this._shipBoosters[pb][0] ? this._shipBoosters[pb][0] += 3 : this._shipBoosters[pb][0] -= 3;
-            }
-            else if (this._shipBoosters[pb][0] < this._playerX + this._shipBoosters[pb][4] - 5 || this._shipBoosters[pb][0] > this._playerX + this._shipBoosters[pb][4]){
-                (this._playerX + this._shipBoosters[pb][4]) > this._shipBoosters[pb][0] ? this._shipBoosters[pb][0] += 1 : this._shipBoosters[pb][0] -= 1;
-            }
-            if (this._shipBoosters[pb][1] < this._shipBoosters[pb][2]){
-                this._shipBoosters[pb][1]++;
-            }
-            else{
-                this._shipBoosters[pb][1] = 0;
-            }
-        }
+
+        this._particles.update(this._canvas.height, this._playerX);
         await this.render();
 
         if (this._gameStart == 1 && this._gameOver == 0){
@@ -427,12 +395,9 @@ class Netervati{
     async render(){
         this._ctx.clearRect(0,0,this._canvas.width,this._canvas.height);
         this._ctx.imageSmoothingEnabled = false;
-        this._starPositions.forEach((star)=>{
-            this._ctx.beginPath();
-            this._ctx.arc(star[0],star[1],1,0,2*Math.PI);
-            this._ctx.fillStyle = "white";
-            this._ctx.fill();
-        });
+
+        this._particles.renderStarPositions(this._ctx);
+        
         let sides = 2;
         this._ctx.save();
         while(sides > 0){
@@ -506,15 +471,9 @@ class Netervati{
 
         if (this._playerDead == 0){
             if (this._playerCollision == 0){
-                this._shipBoosters.forEach((booster)=>{
-                    let smokeSize = (booster[2] - booster[1]) / 4 + 2;
-                    this._ctx.beginPath();
-                    this._ctx.arc(booster[0] + 10,(this._playerY + 45 + booster[1]) + booster[3],smokeSize,0,2*Math.PI);
-                    this._ctx.fillStyle = "white";
-                    this._ctx.fill();
-                });
+                this._particles.renderShipBoosters(this._ctx, this._playerY);
             }
-            
+
             this._ctx.save();
             this._ctx.beginPath();
             this._ctx.moveTo(this._playerX+18,this._playerY - 5);
@@ -575,20 +534,12 @@ class Netervati{
             }
 
             if (this._playerDeathDelay < 75){
-                this._shipExplosions.forEach((explosion)=>{
-                    if (explosion[3] < this._playerDeathDelay && explosion[2] >= this._playerDeathDelay){
-                        this._ctx.beginPath();
-                        this._ctx.arc(this._playerX + explosion[0],this._playerY + explosion[1],(explosion[2] - this._playerDeathDelay) * explosion[4],0,2*Math.PI);
-                        this._ctx.fillStyle = explosion[5] == 0 ? "white" : "#9EA0A2";
-                        this._ctx.fill();
-                    }
-                    else if (explosion[6] >= this._playerDeathDelay && explosion[8] < this._playerDeathDelay){
-                        this._ctx.beginPath();
-                        this._ctx.arc(this._playerX + explosion[0],this._playerY + explosion[1],(this._playerDeathDelay - explosion[7])* explosion[9],0,2*Math.PI);
-                        this._ctx.fillStyle = explosion[5] == 0 ? "white" : "#9EA0A2";
-                        this._ctx.fill();
-                    }
-                });
+                this._particles.renderShipExplosions(
+                    this._ctx,
+                    this._playerDeathDelay,
+                    this._playerX,
+                    this._playerY
+                );
             }
         }
 
