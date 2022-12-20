@@ -1,12 +1,12 @@
 var loadAudio = function (file, dir) {
     if (dir === void 0) { dir = 'data/sfx/'; }
     var audio = new Audio();
-    audio.src = "" + dir + file;
+    audio.src = "".concat(dir).concat(file);
     return audio;
 };
 var loadImage = function (file) {
     var img = document.createElement("img");
-    img.src = "data/img/" + file;
+    img.src = "data/img/".concat(file);
     return img;
 };
 export var SFX = {
