@@ -1,11 +1,11 @@
-type TwoDimensionalArray = Array<Array<number>>
+type ParticlePoints = number[][]
 
 export default class Particles {
-    __defaultShipBoosters: TwoDimensionalArray;
-    __defaultShipExplosions: TwoDimensionalArray;
-    shipBoosters: TwoDimensionalArray;
-    shipExplosions: TwoDimensionalArray;
-    starPositions: TwoDimensionalArray;
+    __defaultShipBoosters: ParticlePoints;
+    __defaultShipExplosions: ParticlePoints;
+    shipBoosters: ParticlePoints;
+    shipExplosions: ParticlePoints;
+    starPositions: ParticlePoints;
 
     constructor(playerX: number) {
         this.starPositions = [
