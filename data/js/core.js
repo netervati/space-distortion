@@ -1,5 +1,6 @@
 import Particles from './particles.js';
 import setStage from './stage.js';
+import Wave from './wave.js';
 import { IMG, SFX } from './assets.js';
 
 
@@ -30,8 +31,7 @@ class Netervati{
         this._distanceMilestone = 100;
 
         this._particles = new Particles(this._playerX);
-        this._curveTransitionPoints = [[100,0,1],[50,1,0],[25,1,0],[60,1,1]];
-        this._curveIn = 100;
+        this._wave = new Wave();
 
         this._asteroid = [];
         this._asteroidSummon = 300;
@@ -114,23 +114,9 @@ class Netervati{
         }
     }
     async update(){
-        let curveTransitionLength = this._curveTransitionPoints.length;
-        for (let tx = 0; tx < curveTransitionLength; tx++){
-            if (this._curveTransitionPoints[tx][0] > 0 && this._curveTransitionPoints[tx][1] != this._curveTransitionPoints[tx][2]){
-                this._curveTransitionPoints[tx][0] --;
-            }
-            else if (this._curveTransitionPoints[tx][0] < 100 && this._curveTransitionPoints[tx][1] == this._curveTransitionPoints[tx][2]){
-                this._curveTransitionPoints[tx][0] ++;
-            }
-            if (this._curveTransitionPoints[tx][0] == 100){
-                this._curveTransitionPoints[tx][1] == 1 ? this._curveTransitionPoints[tx][1] = 0 : this._curveTransitionPoints[tx][1] = 1;
-            }
-            else if (this._curveTransitionPoints[tx][0] == 0){
-                this._curveTransitionPoints[tx][1] == 1 ? this._curveTransitionPoints[tx][1] = 0 : this._curveTransitionPoints[tx][1] = 1;
-            }
-        }
-
+        this._wave.update();
         this._particles.update(this._canvas.height, this._playerX);
+
         await this.render();
 
         if (this._gameStart == 1 && this._gameOver == 0){
@@ -314,8 +300,8 @@ class Netervati{
                     this._gameOver = 1;
                 }
                 if (this._distance < 3500){
-                    if (this._curveIn > 0){
-                        this._curveIn--;
+                    if (this._wave._curveIn > 0){
+                        this._wave._curveIn--;
                     }
                 }
             }
@@ -339,14 +325,14 @@ class Netervati{
         }
         if (this._gameOver == 0){
             if (this._gameStart != 0){
-                if (this._curveIn > 0){
-                    this._curveIn-=2;
+                if (this._wave._curveIn > 0){
+                    this._wave._curveIn-=2;
                 }
             }
         }
         else{
-            if (this._curveIn < 100){
-                this._curveIn+=2;
+            if (this._wave._curveIn < 100){
+                this._wave._curveIn+=2;
             }
             if (this._endingCutscene < 150){
                 this._endingCutscene++;
@@ -397,39 +383,7 @@ class Netervati{
         this._ctx.imageSmoothingEnabled = false;
 
         this._particles.renderStarPositions(this._ctx);
-        
-        let sides = 2;
-        this._ctx.save();
-        while(sides > 0){
-            let curveWidthA = this._curveTransitionPoints[3][0] - this._curveIn > 0 ? this._curveTransitionPoints[3][0] - this._curveIn : 0;
-            let curveWidthB = this._curveTransitionPoints[2][0] - this._curveIn > 0 ? this._curveTransitionPoints[2][0] - this._curveIn : 0;
-            let curveWidthC = this._curveTransitionPoints[1][0] - this._curveIn > 0 ? this._curveTransitionPoints[1][0] - this._curveIn : 0 ;
-            let curveWidthD = this._curveTransitionPoints[0][0] - this._curveIn > 0 ? this._curveTransitionPoints[0][0] - this._curveIn : 0;
-            let curveWidthE = 0;
-            if (sides > 1){
-                curveWidthA = this._canvas.width - curveWidthA;
-                curveWidthB = this._canvas.width - curveWidthB;
-                curveWidthC = this._canvas.width - curveWidthC;
-                curveWidthD = this._canvas.width - curveWidthD;
-                curveWidthE = this._canvas.width - curveWidthE;
-            }
-            this._ctx.beginPath();
-            this._ctx.shadowBlur = 5;
-            this._ctx.shadowColor = "white";
-            this._ctx.moveTo(curveWidthA, this._canvas.height);
-            this._ctx.bezierCurveTo(curveWidthB, 425, curveWidthC, 225, curveWidthD, 0);
-            this._ctx.lineTo(curveWidthE, 0);  
-            this._ctx.lineTo(curveWidthE, this._canvas.height);  
-            this._ctx.lineTo(curveWidthA, this._canvas.height);   
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 100 - this._curveIn < 10 ? 100 - this._curveIn : 10;
-            this._ctx.stroke();
-            this._ctx.fillStyle = "#0A0710";
-            this._ctx.fill();
-
-            sides--;
-        }
-        this._ctx.restore();
+        this._wave.render(this._ctx, this._canvas.width, this._canvas.height);
 
         if (this._gammaRayInitialTransition > 0){
             this._ctx.save();
