@@ -46,26 +46,29 @@ export default class Wave {
         canvasWidth: number,
         canvasHeight: number
     ): void {
+        const setCurveWidth: Function = (
+            point: number,
+            subtractCanvasWidth: boolean
+        ): number => {
+            let curvePoint: number = Math.max(0, point - this._curveIn);
+
+            if (subtractCanvasWidth === true) {
+                curvePoint = canvasWidth - curvePoint;
+            }
+
+            return curvePoint;
+        }
+
         let sides: number = 2;
         ctx.save();
-        while(sides > 0){
-            let curveWidthA = this._curvePoints[3][0] - this._curveIn > 0
-                ? this._curvePoints[3][0] - this._curveIn : 0;
-            let curveWidthB = this._curvePoints[2][0] - this._curveIn > 0
-                ? this._curvePoints[2][0] - this._curveIn : 0;
-            let curveWidthC = this._curvePoints[1][0] - this._curveIn > 0
-                ? this._curvePoints[1][0] - this._curveIn : 0 ;
-            let curveWidthD = this._curvePoints[0][0] - this._curveIn > 0
-                ? this._curvePoints[0][0] - this._curveIn : 0;
-            let curveWidthE = 0;
 
-            if (sides > 1){
-                curveWidthA = canvasWidth - curveWidthA;
-                curveWidthB = canvasWidth - curveWidthB;
-                curveWidthC = canvasWidth - curveWidthC;
-                curveWidthD = canvasWidth - curveWidthD;
-                curveWidthE = canvasWidth - curveWidthE;
-            }
+        while(sides > 0){
+            const toSubtract = sides > 1;
+            const curveWidthA = setCurveWidth(this._curvePoints[3][0], toSubtract);
+            const curveWidthB = setCurveWidth(this._curvePoints[2][0], toSubtract);
+            const curveWidthC = setCurveWidth(this._curvePoints[1][0], toSubtract);
+            const curveWidthD = setCurveWidth(this._curvePoints[0][0], toSubtract);
+            const curveWidthE = setCurveWidth(0, toSubtract);
 
             ctx.beginPath();
             ctx.shadowBlur = 5;

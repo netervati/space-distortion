@@ -32,25 +32,23 @@ var Wave = /** @class */ (function () {
         }
     };
     Wave.prototype.render = function (ctx, canvasWidth, canvasHeight) {
+        var _this = this;
+        var setCurveWidth = function (point, subtractCanvasWidth) {
+            var curvePoint = Math.max(0, point - _this._curveIn);
+            if (subtractCanvasWidth === true) {
+                curvePoint = canvasWidth - curvePoint;
+            }
+            return curvePoint;
+        };
         var sides = 2;
         ctx.save();
         while (sides > 0) {
-            var curveWidthA = this._curvePoints[3][0] - this._curveIn > 0
-                ? this._curvePoints[3][0] - this._curveIn : 0;
-            var curveWidthB = this._curvePoints[2][0] - this._curveIn > 0
-                ? this._curvePoints[2][0] - this._curveIn : 0;
-            var curveWidthC = this._curvePoints[1][0] - this._curveIn > 0
-                ? this._curvePoints[1][0] - this._curveIn : 0;
-            var curveWidthD = this._curvePoints[0][0] - this._curveIn > 0
-                ? this._curvePoints[0][0] - this._curveIn : 0;
-            var curveWidthE = 0;
-            if (sides > 1) {
-                curveWidthA = canvasWidth - curveWidthA;
-                curveWidthB = canvasWidth - curveWidthB;
-                curveWidthC = canvasWidth - curveWidthC;
-                curveWidthD = canvasWidth - curveWidthD;
-                curveWidthE = canvasWidth - curveWidthE;
-            }
+            var toSubtract = sides > 1;
+            var curveWidthA = setCurveWidth(this._curvePoints[3][0], toSubtract);
+            var curveWidthB = setCurveWidth(this._curvePoints[2][0], toSubtract);
+            var curveWidthC = setCurveWidth(this._curvePoints[1][0], toSubtract);
+            var curveWidthD = setCurveWidth(this._curvePoints[0][0], toSubtract);
+            var curveWidthE = setCurveWidth(0, toSubtract);
             ctx.beginPath();
             ctx.shadowBlur = 5;
             ctx.shadowColor = "white";
