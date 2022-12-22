@@ -64,10 +64,22 @@ export default class Wave {
 
         while(sides > 0){
             const toSubtract: boolean = sides > 1;
-            const curveWidthA: number = setCurveWidth(this._curvePoints[3][0], toSubtract);
-            const curveWidthB: number = setCurveWidth(this._curvePoints[2][0], toSubtract);
-            const curveWidthC: number = setCurveWidth(this._curvePoints[1][0], toSubtract);
-            const curveWidthD: number = setCurveWidth(this._curvePoints[0][0], toSubtract);
+            const curveWidthA: number = setCurveWidth(
+                this._curvePoints[3][0],
+                toSubtract
+            );
+            const curveWidthB: number = setCurveWidth(
+                this._curvePoints[2][0],
+                toSubtract
+            );
+            const curveWidthC: number = setCurveWidth(
+                this._curvePoints[1][0],
+                toSubtract
+            );
+            const curveWidthD: number = setCurveWidth(
+                this._curvePoints[0][0],
+                toSubtract
+            );
             const curveWidthE: number = setCurveWidth(0, toSubtract);
 
             ctx.beginPath();
