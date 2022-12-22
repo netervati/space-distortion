@@ -12,8 +12,8 @@ export default class Wave {
         ];
     }
 
-    update() {
-        let curveTransitionLength = this._curvePoints.length;
+    update(): void {
+        const curveTransitionLength: number = this._curvePoints.length;
 
         for (let tx = 0; tx < curveTransitionLength; tx++){
             if (
@@ -45,8 +45,8 @@ export default class Wave {
         ctx: CanvasRenderingContext2D,
         canvasWidth: number,
         canvasHeight: number
-    ) {
-        let sides = 2;
+    ): void {
+        let sides: number = 2;
         ctx.save();
         while(sides > 0){
             let curveWidthA = this._curvePoints[3][0] - this._curveIn > 0

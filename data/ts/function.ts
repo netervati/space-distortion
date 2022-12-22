@@ -34,7 +34,7 @@ function KeyboardController(
         }
     };
 
-    window.onblur = () => {
+    window.onblur = (): void => {
         for (let key in timers) {
             if (timers[key] !== null) {
                 clearInterval(timers[key]);
