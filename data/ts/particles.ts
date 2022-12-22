@@ -1,8 +1,8 @@
 type ParticlePoints = number[][]
 
 export default class Particles {
-    __defaultShipBoosters: ParticlePoints;
-    __defaultShipExplosions: ParticlePoints;
+    readonly __defaultShipBoosters: ParticlePoints;
+    readonly __defaultShipExplosions: ParticlePoints;
     shipBoosters: ParticlePoints;
     shipExplosions: ParticlePoints;
     starPositions: ParticlePoints;
@@ -52,8 +52,8 @@ export default class Particles {
         this.shipExplosions = this.__defaultShipExplosions;
     }
 
-    update(canvasHeight: number, playerX: number) {
-        let starPositionsLength = this.starPositions.length;
+    update(canvasHeight: number, playerX: number): void {
+        let starPositionsLength: number = this.starPositions.length;
 
         for (let sp = 0; sp < starPositionsLength; sp++){
             if (this.starPositions[sp][1] + 8 < canvasHeight){
@@ -69,7 +69,8 @@ export default class Particles {
             this.starPositions[sp][1] = canvasHeight;
         }
 
-        let shipBoostersLength = this.shipBoosters.length;
+        let shipBoostersLength: number = this.shipBoosters.length;
+
         for (let pb = 0; pb < shipBoostersLength; pb++){
             if (this.shipBoosters[pb][0] < (playerX + this.shipBoosters[pb][4]) - 25 ||
                 this.shipBoosters[pb][0] > (playerX + this.shipBoosters[pb][4]) + 15) {
@@ -106,7 +107,7 @@ export default class Particles {
 
     }
 
-    renderStarPositions(ctx: CanvasRenderingContext2D) {
+    renderStarPositions(ctx: CanvasRenderingContext2D): void {
         this.starPositions.forEach(star => {
             ctx.beginPath();
             ctx.arc(star[0], star[1], 1, 0, 2*Math.PI);
@@ -115,7 +116,7 @@ export default class Particles {
         });
     }
 
-    renderShipBoosters(ctx: CanvasRenderingContext2D, playerY: number) {
+    renderShipBoosters(ctx: CanvasRenderingContext2D, playerY: number): void {
         this.shipBoosters.forEach(booster =>{
             ctx.beginPath();
             ctx.arc(
@@ -132,7 +133,7 @@ export default class Particles {
         playerDeathDelay: number,
         playerX: number,
         playerY: number
-    ) {
+    ): void {
         this.shipExplosions.forEach(explosion => {
             if (explosion[3] < playerDeathDelay && explosion[2] >= playerDeathDelay){
                 ctx.beginPath();
@@ -158,7 +159,7 @@ export default class Particles {
 
     }
 
-    reset() {
+    reset(): void {
         this.shipBoosters = this.__defaultShipBoosters;
         this.shipExplosions = this.__defaultShipExplosions;
     }

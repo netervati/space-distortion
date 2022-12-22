@@ -1,9 +1,6 @@
-/**
- * In this file, I had to integrate the code provided in an answer for a stackoverflow question. Here's the link:
- * https://stackoverflow.com/questions/3691461/remove-key-press-delay-in-javascript
- */
-
-function KeyboardController(keys: { [key: string]: Function }, repeat: number) {
+function KeyboardController(
+    keys: { [key: string]: Function },
+    repeat: number): void {
     let timers: { [key: string]: undefined | number } = {};
 
     document.onkeydown = (event: KeyboardEvent): boolean => {

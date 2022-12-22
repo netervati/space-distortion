@@ -1,5 +1,5 @@
 const setStage = (): HTMLCanvasElement => {
-    const canvas = document.createElement("canvas");
+    const canvas: HTMLCanvasElement = document.createElement("canvas");
 
     canvas.style.backgroundColor = "#06030B";
     canvas.style.border = '3px solid white';
