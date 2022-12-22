@@ -5,7 +5,7 @@
 function KeyboardController(keys, repeat) {
     var timers = {};
     document.onkeydown = function (event) {
-        var key = (event || window.event).keyCode;
+        var key = (event || window.event).code;
         if (!(key in keys)) {
             return true;
         }
@@ -19,7 +19,7 @@ function KeyboardController(keys, repeat) {
         return false;
     };
     document.onkeyup = function (event) {
-        var key = (event || window.event).keyCode;
+        var key = (event || window.event).code;
         if (key in timers) {
             if (timers[key] !== null) {
                 clearInterval(timers[key]);

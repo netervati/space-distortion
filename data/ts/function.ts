@@ -3,11 +3,11 @@
  * https://stackoverflow.com/questions/3691461/remove-key-press-delay-in-javascript
  */
 
-function KeyboardController(keys: { [key: number]: Function }, repeat: number) {
-    let timers: { [key: number]: undefined | number } = {};
+function KeyboardController(keys: { [key: string]: Function }, repeat: number) {
+    let timers: { [key: string]: undefined | number } = {};
 
     document.onkeydown = (event: KeyboardEvent): boolean => {
-        const key: number = (event || window.event).keyCode;
+        const key: string = (event || window.event).code;
 
         if (!(key in keys)) {
             return true;
@@ -26,7 +26,7 @@ function KeyboardController(keys: { [key: number]: Function }, repeat: number) {
     };
 
     document.onkeyup = (event: KeyboardEvent): void => {
-        const key: number = (event || window.event).keyCode;
+        const key: string = (event || window.event).code;
 
         if (key in timers) {
             if (timers[key] !== null) {
