@@ -63,12 +63,12 @@ export default class Wave {
         ctx.save();
 
         while(sides > 0){
-            const toSubtract = sides > 1;
-            const curveWidthA = setCurveWidth(this._curvePoints[3][0], toSubtract);
-            const curveWidthB = setCurveWidth(this._curvePoints[2][0], toSubtract);
-            const curveWidthC = setCurveWidth(this._curvePoints[1][0], toSubtract);
-            const curveWidthD = setCurveWidth(this._curvePoints[0][0], toSubtract);
-            const curveWidthE = setCurveWidth(0, toSubtract);
+            const toSubtract: boolean = sides > 1;
+            const curveWidthA: number = setCurveWidth(this._curvePoints[3][0], toSubtract);
+            const curveWidthB: number = setCurveWidth(this._curvePoints[2][0], toSubtract);
+            const curveWidthC: number = setCurveWidth(this._curvePoints[1][0], toSubtract);
+            const curveWidthD: number = setCurveWidth(this._curvePoints[0][0], toSubtract);
+            const curveWidthE: number = setCurveWidth(0, toSubtract);
 
             ctx.beginPath();
             ctx.shadowBlur = 5;
