@@ -35,10 +35,6 @@ class Netervati{
         this._wave = new Wave();
         this._hazards = new Hazards();
 
-        this._comet = {x:0,y:0,trail:40,trailSwitch:0};
-        this._cometSummon = 400;
-        this._cometSummonBasis = 400;
-        this._cometSpeedFactor = 12;
         this._gammaRaySummon = 600;
         this._gammaRayX = 0;
         this._gammaRayInitialTransition = 0;
@@ -56,10 +52,6 @@ class Netervati{
         this._particles.reset();
         this._hazards.reset();
 
-        this._comet = {x:0,y:0,trail:40,trailSwitch:0};
-        this._cometSummon = 400;
-        this._cometSummonBasis = 400;
-        this._cometSpeedFactor = 12;
         this._gammaRaySummon = 600;
         this._gammaRayX = 0;
         this._gammaRayInitialTransition = 0;
@@ -124,26 +116,30 @@ class Netervati{
                 }
             }
 
-            if (this._distance < 4900){
-                this._hazards.asteroidSummon--;
-                if (this._hazards.asteroidSummon == 0){
-                    let decideDistance = Math.floor(Math.random() * 2) + 1;
-                    let randomX = decideDistance == 1 ? this._playerX : Math.random() * ((this._canvas.width - 200) - 100) + 100;
-                    this._hazards.asteroid.push({x:randomX,y:0,speed:this._hazards.asteroidSpeedFactor});
-                    if (this._distance > this._distanceMilestone && this._distanceMilestone < 5000 && this._hazards.asteroidSummonBasis > 40){
-                        this._hazards.asteroidSummonBasis -= 25;
-                        this._distanceMilestone += 100;
-                        if (this._distanceMilestone > 1000 && this._hazards.asteroidSpeedFactor < 18){
-                            this._hazards.asteroidSpeedFactor++;
-                            this._cometSpeedFactor++;
-                        }
-                        if (this._cometSummonBasis > 100){
-                            this._cometSummonBasis -= 50;
-                        }
-                    }
-                    this._hazards.asteroidSummon = this._hazards.asteroidSummonBasis;
+            const proceedHazardUpdate = this._hazards.update(
+                this._canvas.width,
+                this._distance,
+                this._playerX
+            )
+
+            if (proceedHazardUpdate == true) {
+                let adjustHazards = false;
+
+                if (
+                    this._distance > this._distanceMilestone
+                    && this._distanceMilestone < 5000
+                    && this._hazards.asteroidSummonBasis > 40
+                ) {
+                    this._distanceMilestone += 100;
+                    adjustHazards = true;
                 }
-            }
+
+                this._hazards.adjustDifficulty(
+                    adjustHazards,
+                    this._distanceMilestone
+                );
+            }   
+
             if (this._hazards.asteroid.length > 0){
                 let spliceAsteroid = [];
                 let asteroidLength = this._hazards.asteroid.length;
@@ -200,44 +196,44 @@ class Netervati{
                     this._hazards.asteroidDeathParticles = spliceAsteroidDeathParticles;
                 }
             }
-            if (this._cometSummon > 0){
-                this._cometSummon--;
+            if (this._hazards.cometSummon > 0){
+                this._hazards.cometSummon--;
             }
             else{
-                if (this._comet["y"] == 0){
+                if (this._hazards.comet["y"] == 0){
                     if (this._distance < 4900){
-                        this._comet["x"] = Math.floor(Math.random() * ((this._playerX + 40)-this._playerX)) + this._playerX;
-                        this._comet["y"]+=this._cometSpeedFactor;
+                        this._hazards.comet["x"] = Math.floor(Math.random() * ((this._playerX + 40)-this._playerX)) + this._playerX;
+                        this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
                     }
                 }
-                else if (this._comet["y"] < this._canvas.height+200){
-                    this._comet["y"]+=this._cometSpeedFactor;
-                    if (this._comet["trail"] > 20 && this._comet["trailSwitch"] == 0){
-                        this._comet["trail"]-=2;
+                else if (this._hazards.comet["y"] < this._canvas.height+200){
+                    this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
+                    if (this._hazards.comet["trail"] > 20 && this._hazards.comet["trailSwitch"] == 0){
+                        this._hazards.comet["trail"]-=2;
                     }
-                    else if (this._comet["trail"] < 40 && this._comet["trailSwitch"] == 1){
-                        this._comet["trail"]+=2;
+                    else if (this._hazards.comet["trail"] < 40 && this._hazards.comet["trailSwitch"] == 1){
+                        this._hazards.comet["trail"]+=2;
                     }
-                    else if (this._comet["trail"] == 20){
-                        this._comet["trailSwitch"] = 1;
+                    else if (this._hazards.comet["trail"] == 20){
+                        this._hazards.comet["trailSwitch"] = 1;
                     } 
-                    else if (this._comet["trail"] == 40){
-                        this._comet["trailSwitch"] = 0;
+                    else if (this._hazards.comet["trail"] == 40){
+                        this._hazards.comet["trailSwitch"] = 0;
                     }
-                    if (this._playerY <= this._comet["y"] + this._comet["trail"] && this._comet["y"] + this._comet["trail"] <= this._playerY + 60 && this._playerCollision == 0){
-                        if (this._playerX - 2 <= this._comet["x"] - this._comet["trail"] + 5 && this._comet["x"] - this._comet["trail"] + 5 <= this._playerX + 40){
+                    if (this._playerY <= this._hazards.comet["y"] + this._hazards.comet["trail"] && this._hazards.comet["y"] + this._hazards.comet["trail"] <= this._playerY + 60 && this._playerCollision == 0){
+                        if (this._playerX - 2 <= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 <= this._playerX + 40){
                             this._playerCollision = 1;
                         }
-                        else if (this._playerX - 2 >= this._comet["x"] - this._comet["trail"] + 5 && this._playerX - 2 <= this._comet["x"] + this._comet["trail"] - 5){
+                        else if (this._playerX - 2 >= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._playerX - 2 <= this._hazards.comet["x"] + this._hazards.comet["trail"] - 5){
                             this._playerCollision = 1;
                         }
                     }
                 }
                 else{
                     if (this._distance < 4900){
-                        this._cometSummon = this._cometSummonBasis;
+                        this._hazards.cometSummon = this._hazards.cometSummonBasis;
                     }
-                    this._comet["y"] = 0;
+                    this._hazards.comet["y"] = 0;
                 }
             }
             if (this._gammaRaySummon > 0){
@@ -492,15 +488,15 @@ class Netervati{
         
         this._hazards.renderAsteroids(this._ctx);
         
-        if (this._comet["y"] > 0 && this._comet["y"] < this._canvas.height + 200){
+        if (this._hazards.comet["y"] > 0 && this._hazards.comet["y"] < this._canvas.height + 200){
             this._ctx.save();
             this._ctx.beginPath();
             this._ctx.shadowBlur = 5;
             this._ctx.shadowColor = "blue";
-            let trail = this._comet["trail"];
-            this._ctx.arc(this._comet["x"],this._comet["y"],trail,0,1*Math.PI);
-            this._ctx.quadraticCurveTo(this._comet["x"]-trail+5,this._comet["y"]-10,this._comet["x"],this._comet["y"]-130);
-            this._ctx.quadraticCurveTo(this._comet["x"]+trail-5,this._comet["y"]-10,this._comet["x"]+trail,this._comet["y"]);
+            let trail = this._hazards.comet["trail"];
+            this._ctx.arc(this._hazards.comet["x"],this._hazards.comet["y"],trail,0,1*Math.PI);
+            this._ctx.quadraticCurveTo(this._hazards.comet["x"]-trail+5,this._hazards.comet["y"]-10,this._hazards.comet["x"],this._hazards.comet["y"]-130);
+            this._ctx.quadraticCurveTo(this._hazards.comet["x"]+trail-5,this._hazards.comet["y"]-10,this._hazards.comet["x"]+trail,this._hazards.comet["y"]);
             this._ctx.strokeStyle = "white";
             this._ctx.lineWidth = 4;
             this._ctx.stroke();
