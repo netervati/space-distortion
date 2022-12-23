@@ -1,3 +1,4 @@
+import Hazards from './hazards.js';
 import Particles from './particles.js';
 import setStage from './stage.js';
 import Wave from './wave.js';
@@ -32,16 +33,8 @@ class Netervati{
 
         this._particles = new Particles(this._playerX);
         this._wave = new Wave();
+        this._hazards = new Hazards();
 
-        this._asteroid = [];
-        this._asteroidSummon = 300;
-        this._asteroidSummonBasis = 300;
-        this._asteroidSpeedFactor = 6;
-        this._asteroidDeathParticles = [];
-        this._comet = {x:0,y:0,trail:40,trailSwitch:0};
-        this._cometSummon = 400;
-        this._cometSummonBasis = 400;
-        this._cometSpeedFactor = 12;
         this._gammaRaySummon = 600;
         this._gammaRayX = 0;
         this._gammaRayInitialTransition = 0;
@@ -57,16 +50,8 @@ class Netervati{
     }
     reload(){
         this._particles.reset();
+        this._hazards.reset();
 
-        this._asteroid = [];
-        this._asteroidSummon = 300;
-        this._asteroidSummonBasis = 300;
-        this._asteroidSpeedFactor = 6;
-        this._asteroidDeathParticles = [];
-        this._comet = {x:0,y:0,trail:40,trailSwitch:0};
-        this._cometSummon = 400;
-        this._cometSummonBasis = 400;
-        this._cometSpeedFactor = 12;
         this._gammaRaySummon = 600;
         this._gammaRayX = 0;
         this._gammaRayInitialTransition = 0;
@@ -131,120 +116,124 @@ class Netervati{
                 }
             }
 
-            if (this._distance < 4900){
-                this._asteroidSummon--;
-                if (this._asteroidSummon == 0){
-                    let decideDistance = Math.floor(Math.random() * 2) + 1;
-                    let randomX = decideDistance == 1 ? this._playerX : Math.random() * ((this._canvas.width - 200) - 100) + 100;
-                    this._asteroid.push({x:randomX,y:0,speed:this._asteroidSpeedFactor});
-                    if (this._distance > this._distanceMilestone && this._distanceMilestone < 5000 && this._asteroidSummonBasis > 40){
-                        this._asteroidSummonBasis -= 25;
-                        this._distanceMilestone += 100;
-                        if (this._distanceMilestone > 1000 && this._asteroidSpeedFactor < 18){
-                            this._asteroidSpeedFactor++;
-                            this._cometSpeedFactor++;
-                        }
-                        if (this._cometSummonBasis > 100){
-                            this._cometSummonBasis -= 50;
-                        }
-                    }
-                    this._asteroidSummon = this._asteroidSummonBasis;
+            const proceedHazardUpdate = this._hazards.update(
+                this._canvas.width,
+                this._distance,
+                this._playerX
+            )
+
+            if (proceedHazardUpdate == true) {
+                let adjustHazards = false;
+
+                if (
+                    this._distance > this._distanceMilestone
+                    && this._distanceMilestone < 5000
+                    && this._hazards.asteroidSummonBasis > 40
+                ) {
+                    this._distanceMilestone += 100;
+                    adjustHazards = true;
                 }
-            }
-            if (this._asteroid.length > 0){
+
+                this._hazards.adjustDifficulty(
+                    adjustHazards,
+                    this._distanceMilestone
+                );
+            }   
+
+            if (this._hazards.asteroid.length > 0){
                 let spliceAsteroid = [];
-                let asteroidLength = this._asteroid.length;
+                let asteroidLength = this._hazards.asteroid.length;
                 for (let av = 0; av < asteroidLength; av++){
-                    this._asteroid[av]["y"] += this._asteroid[av]["speed"];
+                    this._hazards.asteroid[av]["y"] += this._hazards.asteroid[av]["speed"];
                     let playerBlock = 0;
                     if (this._playerShield > 50 && this._shieldOn == 1){
-                        if (this._playerY - 30 <= this._asteroid[av]["y"] + 25 && this._asteroid[av]["y"] + 25 <= this._playerY + 10 ){
-                            if (this._playerX - 18 <= this._asteroid[av]["x"] - 25 && this._asteroid[av]["x"] - 25 <= this._playerX + 63){
+                        if (this._playerY - 30 <= this._hazards.asteroid[av]["y"] + 25 && this._hazards.asteroid[av]["y"] + 25 <= this._playerY + 10 ){
+                            if (this._playerX - 18 <= this._hazards.asteroid[av]["x"] - 25 && this._hazards.asteroid[av]["x"] - 25 <= this._playerX + 63){
                                 playerBlock = 1;
                             }
-                            else if (this._playerX - 18 >= this._asteroid[av]["x"] - 25 && this._playerX - 18 <= this._asteroid[av]["x"] + 35){
+                            else if (this._playerX - 18 >= this._hazards.asteroid[av]["x"] - 25 && this._playerX - 18 <= this._hazards.asteroid[av]["x"] + 35){
                                 playerBlock = 1;
                             }
                         }
                     }
                     if (playerBlock == 1){
-                        this._asteroidDeathParticles.push({x:this._asteroid[av]["x"],y:this._asteroid[av]["y"],life:30});
+                        this._hazards.asteroidDeathParticles.push({x:this._hazards.asteroid[av]["x"],y:this._hazards.asteroid[av]["y"],life:30});
                         this._playerShield - 50 > 0 ? this._playerShield -= 50 : this._playerShield = 0;
                         SFX["disintegrate"].play();
                         continue;
                     }
                     else{
-                        if (this._playerY <= this._asteroid[av]["y"] + 25 && this._asteroid[av]["y"] + 25 <= this._playerY + 60){
-                            if (this._playerX - 2 <= this._asteroid[av]["x"] - 25 && this._asteroid[av]["x"] - 25 <= this._playerX + 40){
+                        if (this._playerY <= this._hazards.asteroid[av]["y"] + 25 && this._hazards.asteroid[av]["y"] + 25 <= this._playerY + 60){
+                            if (this._playerX - 2 <= this._hazards.asteroid[av]["x"] - 25 && this._hazards.asteroid[av]["x"] - 25 <= this._playerX + 40){
                                 this._playerCollision = 1;
                             }
-                            else if (this._playerX - 2 >= this._asteroid[av]["x"] - 25 && this._playerX - 2 <= this._asteroid[av]["x"] + 35){
+                            else if (this._playerX - 2 >= this._hazards.asteroid[av]["x"] - 25 && this._playerX - 2 <= this._hazards.asteroid[av]["x"] + 35){
                                 this._playerCollision = 1;
                             }
                         }
 
-                        if (this._asteroid[av]["y"] < this._canvas.height){
-                            spliceAsteroid.push(this._asteroid[av]);
+                        if (this._hazards.asteroid[av]["y"] < this._canvas.height){
+                            spliceAsteroid.push(this._hazards.asteroid[av]);
                         }
                     }
                 }
-                this._asteroid = [];
+                this._hazards.asteroid = [];
                 if (spliceAsteroid.length > 0){
-                    this._asteroid = spliceAsteroid;
+                    this._hazards.asteroid = spliceAsteroid;
                 }
             }
-            if (this._asteroidDeathParticles.length > 0){
+            if (this._hazards.asteroidDeathParticles.length > 0){
                 let spliceAsteroidDeathParticles = [];
-                let asteroidDeathParticlesLength = this._asteroidDeathParticles.length;
+                let asteroidDeathParticlesLength = this._hazards.asteroidDeathParticles.length;
                 for (let ad = 0; ad < asteroidDeathParticlesLength; ad++){
-                    if (this._asteroidDeathParticles[ad]["life"] > 0){
-                        this._asteroidDeathParticles[ad]["life"]--;
-                        spliceAsteroidDeathParticles.push(this._asteroidDeathParticles[ad]);
+                    if (this._hazards.asteroidDeathParticles[ad]["life"] > 0){
+                        this._hazards.asteroidDeathParticles[ad]["life"]--;
+                        spliceAsteroidDeathParticles.push(this._hazards.asteroidDeathParticles[ad]);
                     }
                 }
-                this._asteroidDeathParticles = [];
+                this._hazards.asteroidDeathParticles = [];
                 if (spliceAsteroidDeathParticles.length > 0){
-                    this._asteroidDeathParticles = spliceAsteroidDeathParticles;
+                    this._hazards.asteroidDeathParticles = spliceAsteroidDeathParticles;
                 }
             }
-            if (this._cometSummon > 0){
-                this._cometSummon--;
+            if (this._hazards.cometSummon > 0){
+                this._hazards.cometSummon--;
             }
             else{
-                if (this._comet["y"] == 0){
+                if (this._hazards.comet["y"] == 0){
                     if (this._distance < 4900){
-                        this._comet["x"] = Math.floor(Math.random() * ((this._playerX + 40)-this._playerX)) + this._playerX;
-                        this._comet["y"]+=this._cometSpeedFactor;
+                        this._hazards.comet["x"] = Math.floor(Math.random() * ((this._playerX + 40)-this._playerX)) + this._playerX;
+                        this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
                     }
                 }
-                else if (this._comet["y"] < this._canvas.height+200){
-                    this._comet["y"]+=this._cometSpeedFactor;
-                    if (this._comet["trail"] > 20 && this._comet["trailSwitch"] == 0){
-                        this._comet["trail"]-=2;
+                else if (this._hazards.comet["y"] < this._canvas.height+200){
+                    this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
+                    if (this._hazards.comet["trail"] > 20 && this._hazards.comet["trailSwitch"] == 0){
+                        this._hazards.comet["trail"]-=2;
                     }
-                    else if (this._comet["trail"] < 40 && this._comet["trailSwitch"] == 1){
-                        this._comet["trail"]+=2;
+                    else if (this._hazards.comet["trail"] < 40 && this._hazards.comet["trailSwitch"] == 1){
+                        this._hazards.comet["trail"]+=2;
                     }
-                    else if (this._comet["trail"] == 20){
-                        this._comet["trailSwitch"] = 1;
+                    else if (this._hazards.comet["trail"] == 20){
+                        this._hazards.comet["trailSwitch"] = 1;
                     } 
-                    else if (this._comet["trail"] == 40){
-                        this._comet["trailSwitch"] = 0;
+                    else if (this._hazards.comet["trail"] == 40){
+                        this._hazards.comet["trailSwitch"] = 0;
                     }
-                    if (this._playerY <= this._comet["y"] + this._comet["trail"] && this._comet["y"] + this._comet["trail"] <= this._playerY + 60 && this._playerCollision == 0){
-                        if (this._playerX - 2 <= this._comet["x"] - this._comet["trail"] + 5 && this._comet["x"] - this._comet["trail"] + 5 <= this._playerX + 40){
+                    if (this._playerY <= this._hazards.comet["y"] + this._hazards.comet["trail"] && this._hazards.comet["y"] + this._hazards.comet["trail"] <= this._playerY + 60 && this._playerCollision == 0){
+                        if (this._playerX - 2 <= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 <= this._playerX + 40){
                             this._playerCollision = 1;
                         }
-                        else if (this._playerX - 2 >= this._comet["x"] - this._comet["trail"] + 5 && this._playerX - 2 <= this._comet["x"] + this._comet["trail"] - 5){
+                        else if (this._playerX - 2 >= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._playerX - 2 <= this._hazards.comet["x"] + this._hazards.comet["trail"] - 5){
                             this._playerCollision = 1;
                         }
                     }
                 }
                 else{
                     if (this._distance < 4900){
-                        this._cometSummon = this._cometSummonBasis;
+                        this._hazards.cometSummon = this._hazards.cometSummonBasis;
                     }
-                    this._comet["y"] = 0;
+                    this._hazards.comet["y"] = 0;
                 }
             }
             if (this._gammaRaySummon > 0){
@@ -496,56 +485,8 @@ class Netervati{
                 );
             }
         }
-
-        if (this._asteroid.length > 0){
-            this._asteroid.forEach((asteroid)=>{
-                this._ctx.save();
-                this._ctx.beginPath();
-                this._ctx.moveTo(asteroid["x"]-25,asteroid["y"]);
-                this._ctx.lineTo(asteroid["x"]-25,asteroid["y"]+15);
-                this._ctx.quadraticCurveTo(asteroid["x"]-15,asteroid["y"]+18,asteroid["x"]-10,asteroid["y"]+20);
-                this._ctx.quadraticCurveTo(asteroid["x"],asteroid["y"]+25,asteroid["x"]+5,asteroid["y"]+25);
-                this._ctx.quadraticCurveTo(asteroid["x"]+20,asteroid["y"]+25,asteroid["x"]+30,asteroid["y"]);
-                this._ctx.quadraticCurveTo(asteroid["x"]+35,asteroid["y"]-10,asteroid["x"],asteroid["y"]-15);
-                this._ctx.quadraticCurveTo(asteroid["x"]-20,asteroid["y"]-10,asteroid["x"]-25,asteroid["y"]);
-                this._ctx.strokeStyle = "white";
-                this._ctx.lineWidth = 4;
-                this._ctx.stroke();
-                this._ctx.fillStyle = "#06030B";
-                this._ctx.fill();
-                this._ctx.restore();
-            });
-        }
-        if (this._asteroidDeathParticles.length > 0){
-            let ADParticles = [[1,-5,1.5],[-1,5,1.5],[1,-2,0.75],[-1,2,0.75],[1,-5,3],[-1,5,3],[1,-3,2],[-1,3,2],[1,-6,6],[-1,3,12],[1,0,5],[-1,0,5],[1,-3,10],[-1,3,10],[1,2,6],[-1,-4,6]];
-            this._asteroidDeathParticles.forEach((particle)=>{
-                ADParticles.forEach((adp)=>{
-                    this._ctx.save();
-                    this._ctx.shadowBlur = 5;
-                    this._ctx.shadowColor = "yellow";
-                    this._ctx.fillStyle = "white";
-                    this._ctx.fillRect(particle["x"] + ((30 - particle["life"]) * adp[2]) * adp[0], particle["y"] + adp[1], 3, 3);
-                    this._ctx.restore();
-                });
-            });
-        }
-
-        if (this._comet["y"] > 0 && this._comet["y"] < this._canvas.height + 200){
-            this._ctx.save();
-            this._ctx.beginPath();
-            this._ctx.shadowBlur = 5;
-            this._ctx.shadowColor = "blue";
-            let trail = this._comet["trail"];
-            this._ctx.arc(this._comet["x"],this._comet["y"],trail,0,1*Math.PI);
-            this._ctx.quadraticCurveTo(this._comet["x"]-trail+5,this._comet["y"]-10,this._comet["x"],this._comet["y"]-130);
-            this._ctx.quadraticCurveTo(this._comet["x"]+trail-5,this._comet["y"]-10,this._comet["x"]+trail,this._comet["y"]);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.fillStyle = "white";
-            this._ctx.fill();
-            this._ctx.restore();
-        }
+        
+        this._hazards.render(this._ctx, this._canvas.height); 
         
         this._ctx.save();
         this._ctx.beginPath();
