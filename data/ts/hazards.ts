@@ -1,14 +1,20 @@
 type Position = { x: number, y: number }
+type AsteroidStructure = Position & { speed: number }
 type ADPStructure = Position & { life: number }
+type CometStructure = Position & { trail: number, trailSwitch: number }
 
 
 export default class Hazards {
-    asteroid: Position [];
+    asteroid: AsteroidStructure [];
     asteroidSummon: number;
     asteroidSummonBasis: number;
     asteroidSpeedFactor: number;
     asteroidDeathParticles: ADPStructure [];
-    readonly asteroidDeathParticlesSpawn: number[][];
+    readonly asteroidDeathParticlesSpawn: number [][];
+    comet: CometStructure;
+    cometSummon: number;
+    cometSummonBasis: number;
+    cometSpeedFactor: number;
 
     constructor() {
         this.asteroid = [];
@@ -34,6 +40,60 @@ export default class Hazards {
             [1, 2, 6],
             [-1, -4, 6]
         ];
+        this.comet = {
+            x:0,
+            y:0,
+            trail:40,
+            trailSwitch:0
+        };
+        this.cometSummon = 400;
+        this.cometSummonBasis = 400;
+        this.cometSpeedFactor = 12;
+    }
+
+    update(
+        canvasWidth: number,
+        distance: number,
+        playerX: number
+    ): boolean {
+        if (distance < 4900){
+            this.asteroidSummon--;
+
+            if (this.asteroidSummon === 0){
+                let decideDistance = Math.floor(Math.random() * 2) + 1;
+                let randomX = decideDistance == 1 ? playerX
+                    : Math.random() * ((canvasWidth - 200) - 100) + 100;
+                this.asteroid.push({
+                    x: randomX,
+                    y: 0,
+                    speed: this.asteroidSpeedFactor
+                });
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    adjustDifficulty(adjust: boolean, distanceMilestone: number): void {
+        if (adjust === true) {
+            this.asteroidSummonBasis -= 25;
+
+            if (
+                distanceMilestone > 1000
+                && this.asteroidSpeedFactor < 18
+            ) {
+                this.asteroidSpeedFactor++;
+                this.cometSpeedFactor++;
+            }
+
+            if (this.cometSummonBasis > 100){
+                this.cometSummonBasis -= 50;
+            }
+        }
+
+        this.asteroidSummon = this.asteroidSummonBasis;
     }
 
     reset(): void {
@@ -42,6 +102,15 @@ export default class Hazards {
         this.asteroidSummonBasis = 300;
         this.asteroidSpeedFactor = 6;
         this.asteroidDeathParticles = [];
+        this.comet = {
+            x:0,
+            y:0,
+            trail:40,
+            trailSwitch:0
+        };
+        this.cometSummon = 400;
+        this.cometSummonBasis = 400;
+        this.cometSpeedFactor = 12;
     }
 
     renderAsteroids(ctx: CanvasRenderingContext2D): void {
