@@ -80,7 +80,7 @@ var Hazards = /** @class */ (function () {
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
     };
-    Hazards.prototype.renderAsteroids = function (ctx) {
+    Hazards.prototype.render = function (ctx, canvasHeight) {
         var _this = this;
         if (this.asteroid.length > 0) {
             this.asteroid.forEach(function (asteroid) {
@@ -112,6 +112,22 @@ var Hazards = /** @class */ (function () {
                     ctx.restore();
                 });
             });
+        }
+        if (this.comet.y > 0 && this.comet.y < canvasHeight + 200) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = "blue";
+            var trail = this.comet.trail;
+            ctx.arc(this.comet.x, this.comet.y, trail, 0, 1 * Math.PI);
+            ctx.quadraticCurveTo(this.comet.x - trail + 5, this.comet.y - 10, this.comet.x, this.comet.y - 130);
+            ctx.quadraticCurveTo(this.comet.x + trail - 5, this.comet.y - 10, this.comet.x + trail, this.comet.y);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.restore();
         }
     };
     return Hazards;

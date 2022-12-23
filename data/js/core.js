@@ -486,24 +486,7 @@ class Netervati{
             }
         }
         
-        this._hazards.renderAsteroids(this._ctx);
-        
-        if (this._hazards.comet["y"] > 0 && this._hazards.comet["y"] < this._canvas.height + 200){
-            this._ctx.save();
-            this._ctx.beginPath();
-            this._ctx.shadowBlur = 5;
-            this._ctx.shadowColor = "blue";
-            let trail = this._hazards.comet["trail"];
-            this._ctx.arc(this._hazards.comet["x"],this._hazards.comet["y"],trail,0,1*Math.PI);
-            this._ctx.quadraticCurveTo(this._hazards.comet["x"]-trail+5,this._hazards.comet["y"]-10,this._hazards.comet["x"],this._hazards.comet["y"]-130);
-            this._ctx.quadraticCurveTo(this._hazards.comet["x"]+trail-5,this._hazards.comet["y"]-10,this._hazards.comet["x"]+trail,this._hazards.comet["y"]);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.fillStyle = "white";
-            this._ctx.fill();
-            this._ctx.restore();
-        }
+        this._hazards.render(this._ctx, this._canvas.height); 
         
         this._ctx.save();
         this._ctx.beginPath();

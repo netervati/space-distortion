@@ -113,8 +113,8 @@ export default class Hazards {
         this.cometSpeedFactor = 12;
     }
 
-    renderAsteroids(ctx: CanvasRenderingContext2D): void {
-        if (this.asteroid.length > 0){
+    render(ctx: CanvasRenderingContext2D, canvasHeight: number): void {
+        if (this.asteroid.length > 0) {
             this.asteroid.forEach(asteroid => {
                 ctx.save();
                 ctx.beginPath();
@@ -159,9 +159,9 @@ export default class Hazards {
             });
         }
 
-        if (this.asteroidDeathParticles.length > 0){
-            this.asteroidDeathParticles.forEach(particle =>{
-                this.asteroidDeathParticlesSpawn.forEach(adp =>{
+        if (this.asteroidDeathParticles.length > 0) {
+            this.asteroidDeathParticles.forEach(particle => {
+                this.asteroidDeathParticlesSpawn.forEach(adp => {
                     ctx.save();
                     ctx.shadowBlur = 5;
                     ctx.shadowColor = "yellow";
@@ -173,6 +173,38 @@ export default class Hazards {
                     ctx.restore();
                 });
             });
+        }
+
+        if (this.comet.y > 0 && this.comet.y < canvasHeight + 200) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = "blue";
+            const trail = this.comet.trail;
+            ctx.arc(
+                this.comet.x,
+                this.comet.y,
+                trail,
+                0, 1*Math.PI
+            );
+            ctx.quadraticCurveTo(
+                this.comet.x - trail + 5,
+                this.comet.y - 10,
+                this.comet.x,
+                this.comet.y - 130
+            );
+            ctx.quadraticCurveTo(
+                this.comet.x + trail - 5,
+                this.comet.y - 10,
+                this.comet.x + trail,
+                this.comet.y
+            );
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.fillStyle = "white";
+            ctx.fill();
+            ctx.restore();
         }
     }
 }
