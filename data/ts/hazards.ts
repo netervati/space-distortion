@@ -59,9 +59,9 @@ export default class Hazards {
         if (distance < 4900){
             this.asteroidSummon--;
 
-            if (this.asteroidSummon === 0){
-                let decideDistance = Math.floor(Math.random() * 2) + 1;
-                let randomX = decideDistance == 1 ? playerX
+            if (this.asteroidSummon === 0) {
+                const decideDistance = Math.floor(Math.random() * 2) + 1;
+                const randomX = decideDistance == 1 ? playerX
                     : Math.random() * ((canvasWidth - 200) - 100) + 100;
                 this.asteroid.push({
                     x: randomX,
