@@ -1,7 +1,7 @@
 const setStage = (): HTMLCanvasElement => {
-    const canvas: HTMLCanvasElement = document.createElement("canvas");
+    const canvas: HTMLCanvasElement = document.createElement('canvas');
 
-    canvas.style.backgroundColor = "#06030B";
+    canvas.style.backgroundColor = '#06030B';
     canvas.style.border = '3px solid white';
     canvas.style.left = '50%';
     canvas.style.position = 'fixed';
@@ -11,12 +11,11 @@ const setStage = (): HTMLCanvasElement => {
     canvas.width = 700;
     canvas.height = 650;
 
-    document.body.style.margin = "0";
-    document.body.style.backgroundColor = "black";
+    document.body.style.margin = '0';
+    document.body.style.backgroundColor = 'black';
     document.body.appendChild(canvas);
 
     return canvas;
 };
 
 export default setStage;
-

@@ -1,6 +1,7 @@
 function KeyboardController(
-    keys: { [key: string]: Function },
-    repeat: number): void {
+    keys: { [key: string]: () => void },
+    repeat: number,
+): void {
     let timers: { [key: string]: undefined | number } = {};
 
     document.onkeydown = (event: KeyboardEvent): boolean => {
@@ -35,7 +36,7 @@ function KeyboardController(
     };
 
     window.onblur = (): void => {
-        for (let key in timers) {
+        for (const key in timers) {
             if (timers[key] !== null) {
                 clearInterval(timers[key]);
             }
@@ -43,7 +44,6 @@ function KeyboardController(
 
         timers = {};
     };
-};
+}
 
 export default KeyboardController;
-
