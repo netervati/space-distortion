@@ -21,13 +21,13 @@ var Hazards = /** @class */ (function () {
             [1, -3, 10],
             [-1, 3, 10],
             [1, 2, 6],
-            [-1, -4, 6]
+            [-1, -4, 6],
         ];
         this.comet = {
             x: 0,
             y: 0,
             trail: 40,
-            trailSwitch: 0
+            trailSwitch: 0,
         };
         this.cometSummon = 400;
         this.cometSummonBasis = 400;
@@ -38,12 +38,13 @@ var Hazards = /** @class */ (function () {
             this.asteroidSummon--;
             if (this.asteroidSummon === 0) {
                 var decideDistance = Math.floor(Math.random() * 2) + 1;
-                var randomX = decideDistance == 1 ? playerX
-                    : Math.random() * ((canvasWidth - 200) - 100) + 100;
+                var randomX = decideDistance == 1
+                    ? playerX
+                    : Math.random() * (canvasWidth - 200 - 100) + 100;
                 this.asteroid.push({
                     x: randomX,
                     y: 0,
-                    speed: this.asteroidSpeedFactor
+                    speed: this.asteroidSpeedFactor,
                 });
                 return true;
             }
@@ -53,8 +54,7 @@ var Hazards = /** @class */ (function () {
     Hazards.prototype.adjustDifficulty = function (adjust, distanceMilestone) {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;
-            if (distanceMilestone > 1000
-                && this.asteroidSpeedFactor < 18) {
+            if (distanceMilestone > 1000 && this.asteroidSpeedFactor < 18) {
                 this.asteroidSpeedFactor++;
                 this.cometSpeedFactor++;
             }
@@ -74,7 +74,7 @@ var Hazards = /** @class */ (function () {
             x: 0,
             y: 0,
             trail: 40,
-            trailSwitch: 0
+            trailSwitch: 0,
         };
         this.cometSummon = 400;
         this.cometSummonBasis = 400;
@@ -93,10 +93,10 @@ var Hazards = /** @class */ (function () {
                 ctx.quadraticCurveTo(asteroid.x + 20, asteroid.y + 25, asteroid.x + 30, asteroid.y);
                 ctx.quadraticCurveTo(asteroid.x + 35, asteroid.y - 10, asteroid.x, asteroid.y - 15);
                 ctx.quadraticCurveTo(asteroid.x - 20, asteroid.y - 10, asteroid.x - 25, asteroid.y);
-                ctx.strokeStyle = "white";
+                ctx.strokeStyle = 'white';
                 ctx.lineWidth = 4;
                 ctx.stroke();
-                ctx.fillStyle = "#06030B";
+                ctx.fillStyle = '#06030B';
                 ctx.fill();
                 ctx.restore();
             });
@@ -106,9 +106,10 @@ var Hazards = /** @class */ (function () {
                 _this.asteroidDeathParticlesSpawn.forEach(function (adp) {
                     ctx.save();
                     ctx.shadowBlur = 5;
-                    ctx.shadowColor = "yellow";
-                    ctx.fillStyle = "white";
-                    ctx.fillRect(particle.x + ((30 - particle.life) * adp[2]) * adp[0], particle.y + adp[1], 3, 3);
+                    ctx.shadowColor = 'yellow';
+                    ctx.fillStyle = 'white';
+                    var particleLife = 30 - particle.life;
+                    ctx.fillRect(particle.x + particleLife * adp[2] * adp[0], particle.y + adp[1], 3, 3);
                     ctx.restore();
                 });
             });
@@ -117,15 +118,15 @@ var Hazards = /** @class */ (function () {
             ctx.save();
             ctx.beginPath();
             ctx.shadowBlur = 5;
-            ctx.shadowColor = "blue";
+            ctx.shadowColor = 'blue';
             var trail = this.comet.trail;
             ctx.arc(this.comet.x, this.comet.y, trail, 0, 1 * Math.PI);
             ctx.quadraticCurveTo(this.comet.x - trail + 5, this.comet.y - 10, this.comet.x, this.comet.y - 130);
             ctx.quadraticCurveTo(this.comet.x + trail - 5, this.comet.y - 10, this.comet.x + trail, this.comet.y);
-            ctx.strokeStyle = "white";
+            ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
             ctx.stroke();
-            ctx.fillStyle = "white";
+            ctx.fillStyle = 'white';
             ctx.fill();
             ctx.restore();
         }

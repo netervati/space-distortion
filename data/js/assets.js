@@ -5,7 +5,7 @@ var loadAudio = function (file, dir) {
     return audio;
 };
 var loadImage = function (file) {
-    var img = document.createElement("img");
+    var img = document.createElement('img');
     img.src = "data/img/".concat(file);
     return img;
 };

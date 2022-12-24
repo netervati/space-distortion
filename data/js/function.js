@@ -32,5 +32,4 @@ function KeyboardController(keys, repeat) {
         timers = {};
     };
 }
-;
 export default KeyboardController;

@@ -21,7 +21,7 @@ var Particles = /** @class */ (function () {
             [playerX, 1, 20, 20, 13],
             [playerX, 1, 20, 20, 13],
             [playerX, 1, 18, 17, 20],
-            [playerX, 1, 20, 20, 10]
+            [playerX, 1, 20, 20, 10],
         ];
         this.__defaultShipExplosions = [
             [25, 40, 75, 68, 3, 1, 68, 40, 50, 1],
@@ -30,12 +30,12 @@ var Particles = /** @class */ (function () {
             [30, 30, 72, 64, 3, 1, 64, 39, 46, 1],
             [45, 50, 65, 56, 3, 1, 56, 45, 50, 1],
             [18, 40, 65, 55, 1, 0, 55, 38, 43, 0.75],
-            [35, 50, 60, 50, 1, 0, 50, 32, 37, 0.30],
+            [35, 50, 60, 50, 1, 0, 50, 32, 37, 0.3],
             [40, 20, 63, 53, 1, 0, 53, 36, 41, 0.75],
-            [0, 4, 58, 48, 1, 0, 48, 30, 35, 0.30],
+            [0, 4, 58, 48, 1, 0, 48, 30, 35, 0.3],
             [25, 15, 66, 56, 1, 0, 56, 39, 44, 0.75],
-            [-10, 58, 60, 50, 1, 0, 50, 35, 40, 0.30],
-            [-5, 30, 62, 52, 1, 0, 52, 37, 46, 0.75]
+            [-10, 58, 60, 50, 1, 0, 50, 35, 40, 0.3],
+            [-5, 30, 62, 52, 1, 0, 52, 37, 46, 0.75],
         ];
         this.shipBoosters = this.__defaultShipBoosters;
         this.shipExplosions = this.__defaultShipExplosions;
@@ -55,27 +55,35 @@ var Particles = /** @class */ (function () {
         }
         var shipBoostersLength = this.shipBoosters.length;
         for (var pb = 0; pb < shipBoostersLength; pb++) {
-            if (this.shipBoosters[pb][0] < (playerX + this.shipBoosters[pb][4]) - 25 ||
-                this.shipBoosters[pb][0] > (playerX + this.shipBoosters[pb][4]) + 15) {
-                if ((playerX + this.shipBoosters[pb][4]) > this.shipBoosters[pb][0]) {
+            if (this.shipBoosters[pb][0] <
+                playerX + this.shipBoosters[pb][4] - 25 ||
+                this.shipBoosters[pb][0] >
+                    playerX + this.shipBoosters[pb][4] + 15) {
+                if (playerX + this.shipBoosters[pb][4] >
+                    this.shipBoosters[pb][0]) {
                     this.shipBoosters[pb][0] += 7;
                 }
                 else {
                     this.shipBoosters[pb][0] -= 7;
                 }
             }
-            else if (this.shipBoosters[pb][0] < (playerX + this.shipBoosters[pb][4]) - 15 ||
-                this.shipBoosters[pb][0] > (playerX + this.shipBoosters[pb][4]) + 5) {
-                if ((playerX + this.shipBoosters[pb][4]) > this.shipBoosters[pb][0]) {
+            else if (this.shipBoosters[pb][0] <
+                playerX + this.shipBoosters[pb][4] - 15 ||
+                this.shipBoosters[pb][0] >
+                    playerX + this.shipBoosters[pb][4] + 5) {
+                if (playerX + this.shipBoosters[pb][4] >
+                    this.shipBoosters[pb][0]) {
                     this.shipBoosters[pb][0] += 3;
                 }
                 else {
                     this.shipBoosters[pb][0] -= 3;
                 }
             }
-            else if (this.shipBoosters[pb][0] < playerX + this.shipBoosters[pb][4] - 5 ||
+            else if (this.shipBoosters[pb][0] <
+                playerX + this.shipBoosters[pb][4] - 5 ||
                 this.shipBoosters[pb][0] > playerX + this.shipBoosters[pb][4]) {
-                if ((playerX + this.shipBoosters[pb][4]) > this.shipBoosters[pb][0]) {
+                if (playerX + this.shipBoosters[pb][4] >
+                    this.shipBoosters[pb][0]) {
                     this.shipBoosters[pb][0] += 1;
                 }
                 else {
@@ -94,30 +102,32 @@ var Particles = /** @class */ (function () {
         this.starPositions.forEach(function (star) {
             ctx.beginPath();
             ctx.arc(star[0], star[1], 1, 0, 2 * Math.PI);
-            ctx.fillStyle = "white";
+            ctx.fillStyle = 'white';
             ctx.fill();
         });
     };
     Particles.prototype.renderShipBoosters = function (ctx, playerY) {
         this.shipBoosters.forEach(function (booster) {
             ctx.beginPath();
-            ctx.arc(booster[0] + 10, (playerY + 45 + booster[1]) + booster[3], (booster[2] - booster[1]) / 4 + 2, 0, 2 * Math.PI);
-            ctx.fillStyle = "white";
+            ctx.arc(booster[0] + 10, playerY + 45 + booster[1] + booster[3], (booster[2] - booster[1]) / 4 + 2, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
             ctx.fill();
         });
     };
     Particles.prototype.renderShipExplosions = function (ctx, playerDeathDelay, playerX, playerY) {
         this.shipExplosions.forEach(function (explosion) {
-            if (explosion[3] < playerDeathDelay && explosion[2] >= playerDeathDelay) {
+            if (explosion[3] < playerDeathDelay &&
+                explosion[2] >= playerDeathDelay) {
                 ctx.beginPath();
                 ctx.arc(playerX + explosion[0], playerY + explosion[1], (explosion[2] - playerDeathDelay) * explosion[4], 0, 2 * Math.PI);
-                ctx.fillStyle = explosion[5] == 0 ? "white" : "#9EA0A2";
+                ctx.fillStyle = explosion[5] == 0 ? 'white' : '#9EA0A2';
                 ctx.fill();
             }
-            else if (explosion[6] >= playerDeathDelay && explosion[8] < playerDeathDelay) {
+            else if (explosion[6] >= playerDeathDelay &&
+                explosion[8] < playerDeathDelay) {
                 ctx.beginPath();
                 ctx.arc(playerX + explosion[0], playerY + explosion[1], (playerDeathDelay - explosion[7]) * explosion[9], 0, 2 * Math.PI);
-                ctx.fillStyle = explosion[5] == 0 ? "white" : "#9EA0A2";
+                ctx.fillStyle = explosion[5] == 0 ? 'white' : '#9EA0A2';
                 ctx.fill();
             }
         });

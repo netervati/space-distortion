@@ -1,4 +1,4 @@
-type ParticlePoints = number[][]
+type ParticlePoints = number[][];
 
 export default class Particles {
     readonly __defaultShipBoosters: ParticlePoints;
@@ -30,100 +30,119 @@ export default class Particles {
             [playerX, 1, 20, 20, 13],
             [playerX, 1, 20, 20, 13],
             [playerX, 1, 18, 17, 20],
-            [playerX, 1, 20, 20, 10]
+            [playerX, 1, 20, 20, 10],
         ];
 
         this.__defaultShipExplosions = [
             [25, 40, 75, 68, 3, 1, 68, 40, 50, 1],
             [12, 30, 70, 63, 3, 1, 63, 38, 45, 1],
-            [8, 50, 73, 65,3, 1, 65, 40, 47, 1],
+            [8, 50, 73, 65, 3, 1, 65, 40, 47, 1],
             [30, 30, 72, 64, 3, 1, 64, 39, 46, 1],
             [45, 50, 65, 56, 3, 1, 56, 45, 50, 1],
             [18, 40, 65, 55, 1, 0, 55, 38, 43, 0.75],
-            [35, 50, 60, 50, 1, 0, 50, 32, 37, 0.30],
+            [35, 50, 60, 50, 1, 0, 50, 32, 37, 0.3],
             [40, 20, 63, 53, 1, 0, 53, 36, 41, 0.75],
-            [0, 4, 58, 48, 1, 0, 48, 30, 35, 0.30],
+            [0, 4, 58, 48, 1, 0, 48, 30, 35, 0.3],
             [25, 15, 66, 56, 1, 0, 56, 39, 44, 0.75],
-            [-10, 58, 60, 50, 1, 0, 50, 35, 40, 0.30],
-            [-5, 30, 62, 52, 1, 0, 52, 37, 46, 0.75]
+            [-10, 58, 60, 50, 1, 0, 50, 35, 40, 0.3],
+            [-5, 30, 62, 52, 1, 0, 52, 37, 46, 0.75],
         ];
-        
+
         this.shipBoosters = this.__defaultShipBoosters;
         this.shipExplosions = this.__defaultShipExplosions;
     }
 
     update(canvasHeight: number, playerX: number): void {
-        let starPositionsLength: number = this.starPositions.length;
+        const starPositionsLength: number = this.starPositions.length;
 
-        for (let sp = 0; sp < starPositionsLength; sp++){
-            if (this.starPositions[sp][1] + 8 < canvasHeight){
+        for (let sp = 0; sp < starPositionsLength; sp++) {
+            if (this.starPositions[sp][1] + 8 < canvasHeight) {
                 this.starPositions[sp][1] += 8;
                 continue;
             }
 
-            if (this.starPositions[sp][1] === canvasHeight){
+            if (this.starPositions[sp][1] === canvasHeight) {
                 this.starPositions[sp][1] = 0;
                 continue;
             }
-            
+
             this.starPositions[sp][1] = canvasHeight;
         }
 
-        let shipBoostersLength: number = this.shipBoosters.length;
+        const shipBoostersLength: number = this.shipBoosters.length;
 
-        for (let pb = 0; pb < shipBoostersLength; pb++){
-            if (this.shipBoosters[pb][0] < (playerX + this.shipBoosters[pb][4]) - 25 ||
-                this.shipBoosters[pb][0] > (playerX + this.shipBoosters[pb][4]) + 15) {
-                if ((playerX + this.shipBoosters[pb][4]) > this.shipBoosters[pb][0]) {
+        for (let pb = 0; pb < shipBoostersLength; pb++) {
+            if (
+                this.shipBoosters[pb][0] <
+                    playerX + this.shipBoosters[pb][4] - 25 ||
+                this.shipBoosters[pb][0] >
+                    playerX + this.shipBoosters[pb][4] + 15
+            ) {
+                if (
+                    playerX + this.shipBoosters[pb][4] >
+                    this.shipBoosters[pb][0]
+                ) {
                     this.shipBoosters[pb][0] += 7;
                 } else {
                     this.shipBoosters[pb][0] -= 7;
                 }
-            }
-            else if (this.shipBoosters[pb][0] < (playerX + this.shipBoosters[pb][4]) - 15 ||
-                     this.shipBoosters[pb][0] > (playerX + this.shipBoosters[pb][4]) + 5) {
-                if ((playerX + this.shipBoosters[pb][4]) > this.shipBoosters[pb][0]) {
+            } else if (
+                this.shipBoosters[pb][0] <
+                    playerX + this.shipBoosters[pb][4] - 15 ||
+                this.shipBoosters[pb][0] >
+                    playerX + this.shipBoosters[pb][4] + 5
+            ) {
+                if (
+                    playerX + this.shipBoosters[pb][4] >
+                    this.shipBoosters[pb][0]
+                ) {
                     this.shipBoosters[pb][0] += 3;
                 } else {
                     this.shipBoosters[pb][0] -= 3;
                 }
-            }
-            else if (this.shipBoosters[pb][0] < playerX + this.shipBoosters[pb][4] - 5 ||
-                     this.shipBoosters[pb][0] > playerX + this.shipBoosters[pb][4]) {
-                if ((playerX + this.shipBoosters[pb][4]) > this.shipBoosters[pb][0]) {
+            } else if (
+                this.shipBoosters[pb][0] <
+                    playerX + this.shipBoosters[pb][4] - 5 ||
+                this.shipBoosters[pb][0] > playerX + this.shipBoosters[pb][4]
+            ) {
+                if (
+                    playerX + this.shipBoosters[pb][4] >
+                    this.shipBoosters[pb][0]
+                ) {
                     this.shipBoosters[pb][0] += 1;
                 } else {
                     this.shipBoosters[pb][0] -= 1;
                 }
             }
 
-            if (this.shipBoosters[pb][1] < this.shipBoosters[pb][2]){
+            if (this.shipBoosters[pb][1] < this.shipBoosters[pb][2]) {
                 this.shipBoosters[pb][1]++;
-            }
-            else{
+            } else {
                 this.shipBoosters[pb][1] = 0;
             }
         }
-
     }
 
     renderStarPositions(ctx: CanvasRenderingContext2D): void {
-        this.starPositions.forEach(star => {
+        this.starPositions.forEach((star) => {
             ctx.beginPath();
-            ctx.arc(star[0], star[1], 1, 0, 2*Math.PI);
-            ctx.fillStyle = "white";
+            ctx.arc(star[0], star[1], 1, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
             ctx.fill();
         });
     }
 
     renderShipBoosters(ctx: CanvasRenderingContext2D, playerY: number): void {
-        this.shipBoosters.forEach(booster =>{
+        this.shipBoosters.forEach((booster) => {
             ctx.beginPath();
             ctx.arc(
-                booster[0] + 10, (playerY + 45 + booster[1]) + booster[3],
-                (booster[2] - booster[1]) / 4 + 2, 0, 2*Math.PI
+                booster[0] + 10,
+                playerY + 45 + booster[1] + booster[3],
+                (booster[2] - booster[1]) / 4 + 2,
+                0,
+                2 * Math.PI,
             );
-            ctx.fillStyle = "white";
+            ctx.fillStyle = 'white';
             ctx.fill();
         });
     }
@@ -132,31 +151,39 @@ export default class Particles {
         ctx: CanvasRenderingContext2D,
         playerDeathDelay: number,
         playerX: number,
-        playerY: number
+        playerY: number,
     ): void {
-        this.shipExplosions.forEach(explosion => {
-            if (explosion[3] < playerDeathDelay && explosion[2] >= playerDeathDelay){
+        this.shipExplosions.forEach((explosion) => {
+            if (
+                explosion[3] < playerDeathDelay &&
+                explosion[2] >= playerDeathDelay
+            ) {
                 ctx.beginPath();
                 ctx.arc(
-                    playerX + explosion[0], playerY + explosion[1],
+                    playerX + explosion[0],
+                    playerY + explosion[1],
                     (explosion[2] - playerDeathDelay) * explosion[4],
-                    0, 2 * Math.PI
+                    0,
+                    2 * Math.PI,
                 );
-                ctx.fillStyle = explosion[5] == 0 ? "white" : "#9EA0A2";
+                ctx.fillStyle = explosion[5] == 0 ? 'white' : '#9EA0A2';
                 ctx.fill();
-            }
-            else if (explosion[6] >= playerDeathDelay && explosion[8] < playerDeathDelay){
+            } else if (
+                explosion[6] >= playerDeathDelay &&
+                explosion[8] < playerDeathDelay
+            ) {
                 ctx.beginPath();
                 ctx.arc(
-                    playerX + explosion[0], playerY + explosion[1],
+                    playerX + explosion[0],
+                    playerY + explosion[1],
                     (playerDeathDelay - explosion[7]) * explosion[9],
-                    0, 2 * Math.PI
+                    0,
+                    2 * Math.PI,
                 );
-                ctx.fillStyle = explosion[5] == 0 ? "white" : "#9EA0A2";
+                ctx.fillStyle = explosion[5] == 0 ? 'white' : '#9EA0A2';
                 ctx.fill();
             }
         });
-
     }
 
     reset(): void {
@@ -164,4 +191,3 @@ export default class Particles {
         this.shipExplosions = this.__defaultShipExplosions;
     }
 }
-
