@@ -5,7 +5,7 @@ var Wave = /** @class */ (function () {
             [100, 0, 1],
             [50, 1, 0],
             [25, 1, 0],
-            [60, 1, 1]
+            [60, 1, 1],
         ];
     }
     Wave.prototype.update = function () {
@@ -20,14 +20,12 @@ var Wave = /** @class */ (function () {
                 this._curvePoints[tx][0]++;
             }
             if (this._curvePoints[tx][0] == 100) {
-                this._curvePoints[tx][1] == 1
-                    ? this._curvePoints[tx][1] = 0
-                    : this._curvePoints[tx][1] = 1;
+                this._curvePoints[tx][1] =
+                    this._curvePoints[tx][1] === 1 ? 0 : 1;
             }
-            else if (this._curvePoints[tx][0] == 0) {
-                this._curvePoints[tx][1] == 1
-                    ? this._curvePoints[tx][1] = 0
-                    : this._curvePoints[tx][1] = 1;
+            else if (this._curvePoints[tx][0] === 0) {
+                this._curvePoints[tx][1] =
+                    this._curvePoints[tx][1] === 1 ? 0 : 1;
             }
         }
     };
@@ -51,16 +49,16 @@ var Wave = /** @class */ (function () {
             var curveWidthE = setCurveWidth(0, toSubtract);
             ctx.beginPath();
             ctx.shadowBlur = 5;
-            ctx.shadowColor = "white";
+            ctx.shadowColor = 'white';
             ctx.moveTo(curveWidthA, canvasHeight);
             ctx.bezierCurveTo(curveWidthB, 425, curveWidthC, 225, curveWidthD, 0);
             ctx.lineTo(curveWidthE, 0);
             ctx.lineTo(curveWidthE, canvasHeight);
             ctx.lineTo(curveWidthA, canvasHeight);
-            ctx.strokeStyle = "white";
+            ctx.strokeStyle = 'white';
             ctx.lineWidth = 100 - this._curveIn < 10 ? 100 - this._curveIn : 10;
             ctx.stroke();
-            ctx.fillStyle = "#0A0710";
+            ctx.fillStyle = '#0A0710';
             ctx.fill();
             sides--;
         }
