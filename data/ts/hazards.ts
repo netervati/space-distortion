@@ -50,7 +50,11 @@ export default class Hazards {
         this.cometSpeedFactor = 12;
     }
 
-    update(canvasWidth: number, distance: number, playerX: number): boolean {
+    spawnAsteroid(
+        canvasWidth: number,
+        distance: number,
+        playerX: number,
+    ): boolean {
         if (distance < 4900) {
             this.asteroidSummon--;
 
@@ -73,7 +77,67 @@ export default class Hazards {
         return false;
     }
 
-    adjustDifficulty(adjust: boolean, distanceMilestone: number): void {
+    spawnComet(
+        canvasHeight: number,
+        distance: number,
+        playerX: number,
+    ): boolean {
+        let activeComet = false;
+
+        if (this.cometSummon > 0) {
+            this.cometSummon--;
+        } else {
+            if (this.comet.y === 0) {
+                if (distance < 4900) {
+                    this.comet.x =
+                        Math.floor(Math.random() * (playerX + 40 - playerX)) +
+                        playerX;
+                    this.comet.y += this.cometSpeedFactor;
+                }
+            } else if (this.comet.y < canvasHeight + 200) {
+                this.comet.y += this.cometSpeedFactor;
+
+                if (this.comet.trail > 20 && this.comet.trailSwitch === 0) {
+                    this.comet.trail -= 2;
+                } else if (
+                    this.comet.trail < 40 &&
+                    this.comet.trailSwitch === 1
+                ) {
+                    this.comet.trail += 2;
+                } else if (this.comet.trail === 20) {
+                    this.comet.trailSwitch = 1;
+                } else if (this.comet.trail === 40) {
+                    this.comet.trailSwitch = 0;
+                }
+
+                activeComet = true;
+            } else {
+                if (distance < 4900) {
+                    this.cometSummon = this.cometSummonBasis;
+                }
+
+                this.comet.y = 0;
+            }
+        }
+
+        return activeComet;
+    }
+
+    updateDeathParticles() {
+        if (this.asteroidDeathParticles.length > 0) {
+            const spliceAsteroidDeathParticles: ADPStructure[] = [];
+            this.asteroidDeathParticles.forEach((adp) => {
+                if (adp.life > 0) {
+                    adp.life--;
+                    spliceAsteroidDeathParticles.push(adp);
+                }
+            });
+
+            this.asteroidDeathParticles = spliceAsteroidDeathParticles;
+        }
+    }
+
+    adjustSpawnSettings(adjust: boolean, distanceMilestone: number): void {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;
 
@@ -88,6 +152,88 @@ export default class Hazards {
         }
 
         this.asteroidSummon = this.asteroidSummonBasis;
+    }
+
+    collideWithAsteroid(
+        playerShield: number,
+        shieldOn: number,
+        playerX: number,
+        playerY: number,
+        asteroid: Position,
+    ): { blocked: boolean; collided: boolean } {
+        let blocked = false;
+        let collided = false;
+
+        if (playerShield > 50 && shieldOn === 1) {
+            if (
+                playerY - 30 <= asteroid.y + 25 &&
+                asteroid.y + 25 <= playerY + 10
+            ) {
+                if (
+                    playerX - 18 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 63
+                ) {
+                    blocked = true;
+                } else if (
+                    playerX - 18 >= asteroid.x - 25 &&
+                    playerX - 18 <= asteroid.x + 35
+                ) {
+                    blocked = true;
+                }
+            }
+        }
+
+        if (blocked === true) {
+            this.asteroidDeathParticles.push({
+                x: asteroid.x,
+                y: asteroid.y,
+                life: 30,
+            });
+        } else {
+            if (playerY <= asteroid.y + 25 && asteroid.y + 25 <= playerY + 60) {
+                if (
+                    playerX - 2 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 40
+                ) {
+                    collided = true;
+                } else if (
+                    playerX - 2 >= asteroid.x - 25 &&
+                    playerX - 2 <= asteroid.x + 35
+                ) {
+                    collided = true;
+                }
+            }
+        }
+
+        return { blocked, collided };
+    }
+
+    collideWithComet(
+        playerCollision: number,
+        playerX: number,
+        playerY: number,
+    ): boolean {
+        let collided = false;
+
+        if (
+            playerY <= this.comet.y + this.comet.trail &&
+            this.comet.y + this.comet.trail <= playerY + 60 &&
+            playerCollision === 0
+        ) {
+            if (
+                playerX - 2 <= this.comet.x - this.comet.trail + 5 &&
+                this.comet.x - this.comet.trail + 5 <= playerX + 40
+            ) {
+                collided = true;
+            } else if (
+                playerX - 2 >= this.comet.x - this.comet.trail + 5 &&
+                playerX - 2 <= this.comet.x + this.comet.trail - 5
+            ) {
+                collided = true;
+            }
+        }
+
+        return collided;
     }
 
     reset(): void {

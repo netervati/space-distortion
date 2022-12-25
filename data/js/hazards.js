@@ -33,7 +33,7 @@ var Hazards = /** @class */ (function () {
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
     }
-    Hazards.prototype.update = function (canvasWidth, distance, playerX) {
+    Hazards.prototype.spawnAsteroid = function (canvasWidth, distance, playerX) {
         if (distance < 4900) {
             this.asteroidSummon--;
             if (this.asteroidSummon === 0) {
@@ -51,7 +51,59 @@ var Hazards = /** @class */ (function () {
         }
         return false;
     };
-    Hazards.prototype.adjustDifficulty = function (adjust, distanceMilestone) {
+    Hazards.prototype.spawnComet = function (canvasHeight, distance, playerX) {
+        var activeComet = false;
+        if (this.cometSummon > 0) {
+            this.cometSummon--;
+        }
+        else {
+            if (this.comet.y === 0) {
+                if (distance < 4900) {
+                    this.comet.x =
+                        Math.floor(Math.random() * (playerX + 40 - playerX)) +
+                            playerX;
+                    this.comet.y += this.cometSpeedFactor;
+                }
+            }
+            else if (this.comet.y < canvasHeight + 200) {
+                this.comet.y += this.cometSpeedFactor;
+                if (this.comet.trail > 20 && this.comet.trailSwitch === 0) {
+                    this.comet.trail -= 2;
+                }
+                else if (this.comet.trail < 40 &&
+                    this.comet.trailSwitch === 1) {
+                    this.comet.trail += 2;
+                }
+                else if (this.comet.trail === 20) {
+                    this.comet.trailSwitch = 1;
+                }
+                else if (this.comet.trail === 40) {
+                    this.comet.trailSwitch = 0;
+                }
+                activeComet = true;
+            }
+            else {
+                if (distance < 4900) {
+                    this.cometSummon = this.cometSummonBasis;
+                }
+                this.comet.y = 0;
+            }
+        }
+        return activeComet;
+    };
+    Hazards.prototype.updateDeathParticles = function () {
+        if (this.asteroidDeathParticles.length > 0) {
+            var spliceAsteroidDeathParticles_1 = [];
+            this.asteroidDeathParticles.forEach(function (adp) {
+                if (adp.life > 0) {
+                    adp.life--;
+                    spliceAsteroidDeathParticles_1.push(adp);
+                }
+            });
+            this.asteroidDeathParticles = spliceAsteroidDeathParticles_1;
+        }
+    };
+    Hazards.prototype.adjustSpawnSettings = function (adjust, distanceMilestone) {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;
             if (distanceMilestone > 1000 && this.asteroidSpeedFactor < 18) {
@@ -63,6 +115,59 @@ var Hazards = /** @class */ (function () {
             }
         }
         this.asteroidSummon = this.asteroidSummonBasis;
+    };
+    Hazards.prototype.collideWithAsteroid = function (playerShield, shieldOn, playerX, playerY, asteroid) {
+        var blocked = false;
+        var collided = false;
+        if (playerShield > 50 && shieldOn === 1) {
+            if (playerY - 30 <= asteroid.y + 25 &&
+                asteroid.y + 25 <= playerY + 10) {
+                if (playerX - 18 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 63) {
+                    blocked = true;
+                }
+                else if (playerX - 18 >= asteroid.x - 25 &&
+                    playerX - 18 <= asteroid.x + 35) {
+                    blocked = true;
+                }
+            }
+        }
+        if (blocked === true) {
+            this.asteroidDeathParticles.push({
+                x: asteroid.x,
+                y: asteroid.y,
+                life: 30,
+            });
+        }
+        else {
+            if (playerY <= asteroid.y + 25 && asteroid.y + 25 <= playerY + 60) {
+                if (playerX - 2 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 40) {
+                    collided = true;
+                }
+                else if (playerX - 2 >= asteroid.x - 25 &&
+                    playerX - 2 <= asteroid.x + 35) {
+                    collided = true;
+                }
+            }
+        }
+        return { blocked: blocked, collided: collided };
+    };
+    Hazards.prototype.collideWithComet = function (playerCollision, playerX, playerY) {
+        var collided = false;
+        if (playerY <= this.comet.y + this.comet.trail &&
+            this.comet.y + this.comet.trail <= playerY + 60 &&
+            playerCollision === 0) {
+            if (playerX - 2 <= this.comet.x - this.comet.trail + 5 &&
+                this.comet.x - this.comet.trail + 5 <= playerX + 40) {
+                collided = true;
+            }
+            else if (playerX - 2 >= this.comet.x - this.comet.trail + 5 &&
+                playerX - 2 <= this.comet.x + this.comet.trail - 5) {
+                collided = true;
+            }
+        }
+        return collided;
     };
     Hazards.prototype.reset = function () {
         this.asteroid = [];

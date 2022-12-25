@@ -116,7 +116,7 @@ class Netervati{
                 }
             }
 
-            const proceedHazardUpdate = this._hazards.update(
+            const proceedHazardUpdate = this._hazards.spawnAsteroid(
                 this._canvas.width,
                 this._distance,
                 this._playerX
@@ -134,108 +134,64 @@ class Netervati{
                     adjustHazards = true;
                 }
 
-                this._hazards.adjustDifficulty(
+                this._hazards.adjustSpawnSettings(
                     adjustHazards,
                     this._distanceMilestone
                 );
             }   
 
             if (this._hazards.asteroid.length > 0){
-                let spliceAsteroid = [];
-                let asteroidLength = this._hazards.asteroid.length;
-                for (let av = 0; av < asteroidLength; av++){
-                    this._hazards.asteroid[av]["y"] += this._hazards.asteroid[av]["speed"];
-                    let playerBlock = 0;
-                    if (this._playerShield > 50 && this._shieldOn == 1){
-                        if (this._playerY - 30 <= this._hazards.asteroid[av]["y"] + 25 && this._hazards.asteroid[av]["y"] + 25 <= this._playerY + 10 ){
-                            if (this._playerX - 18 <= this._hazards.asteroid[av]["x"] - 25 && this._hazards.asteroid[av]["x"] - 25 <= this._playerX + 63){
-                                playerBlock = 1;
-                            }
-                            else if (this._playerX - 18 >= this._hazards.asteroid[av]["x"] - 25 && this._playerX - 18 <= this._hazards.asteroid[av]["x"] + 35){
-                                playerBlock = 1;
-                            }
-                        }
-                    }
-                    if (playerBlock == 1){
-                        this._hazards.asteroidDeathParticles.push({x:this._hazards.asteroid[av]["x"],y:this._hazards.asteroid[av]["y"],life:30});
-                        this._playerShield - 50 > 0 ? this._playerShield -= 50 : this._playerShield = 0;
-                        SFX["disintegrate"].play();
-                        continue;
-                    }
-                    else{
-                        if (this._playerY <= this._hazards.asteroid[av]["y"] + 25 && this._hazards.asteroid[av]["y"] + 25 <= this._playerY + 60){
-                            if (this._playerX - 2 <= this._hazards.asteroid[av]["x"] - 25 && this._hazards.asteroid[av]["x"] - 25 <= this._playerX + 40){
-                                this._playerCollision = 1;
-                            }
-                            else if (this._playerX - 2 >= this._hazards.asteroid[av]["x"] - 25 && this._playerX - 2 <= this._hazards.asteroid[av]["x"] + 35){
-                                this._playerCollision = 1;
-                            }
+                const spliceAsteroid = [];
+
+                for (const asteroid of this._hazards.asteroid) {
+                    asteroid.y += asteroid.speed;
+
+                    const { blocked, collided } = this._hazards.collideWithAsteroid(
+                        this._playerShield,
+                        this._shieldOn,
+                        this._playerX,
+                        this._playerY,
+                        asteroid
+                    );
+
+                    if (blocked === true) {
+                        this._playerShield = this._playerShield - 50 || 0;
+                        SFX.disintegrate.play();
+                    } else {
+                        if (collided === true) {
+                            this._playerCollision = 1;
                         }
 
-                        if (this._hazards.asteroid[av]["y"] < this._canvas.height){
-                            spliceAsteroid.push(this._hazards.asteroid[av]);
+                        if (asteroid.y < this._canvas.height){
+                            spliceAsteroid.push(asteroid);
                         }
                     }
+
                 }
-                this._hazards.asteroid = [];
-                if (spliceAsteroid.length > 0){
-                    this._hazards.asteroid = spliceAsteroid;
+
+                this._hazards.asteroid = spliceAsteroid;
+            }
+
+            this._hazards.updateDeathParticles();
+
+            const activeComet = this._hazards.spawnComet(
+                this._canvas.height,
+                this._distance,
+                this._playerX
+            );
+
+            if (activeComet === true) {
+                const collided = this._hazards.collideWithComet(
+                    this._playerCollision,
+                    this._playerX,
+                    this._playerY
+                );
+
+                if (collided === true) {
+                    this._playerCollision = 1;
                 }
             }
-            if (this._hazards.asteroidDeathParticles.length > 0){
-                let spliceAsteroidDeathParticles = [];
-                let asteroidDeathParticlesLength = this._hazards.asteroidDeathParticles.length;
-                for (let ad = 0; ad < asteroidDeathParticlesLength; ad++){
-                    if (this._hazards.asteroidDeathParticles[ad]["life"] > 0){
-                        this._hazards.asteroidDeathParticles[ad]["life"]--;
-                        spliceAsteroidDeathParticles.push(this._hazards.asteroidDeathParticles[ad]);
-                    }
-                }
-                this._hazards.asteroidDeathParticles = [];
-                if (spliceAsteroidDeathParticles.length > 0){
-                    this._hazards.asteroidDeathParticles = spliceAsteroidDeathParticles;
-                }
-            }
-            if (this._hazards.cometSummon > 0){
-                this._hazards.cometSummon--;
-            }
-            else{
-                if (this._hazards.comet["y"] == 0){
-                    if (this._distance < 4900){
-                        this._hazards.comet["x"] = Math.floor(Math.random() * ((this._playerX + 40)-this._playerX)) + this._playerX;
-                        this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
-                    }
-                }
-                else if (this._hazards.comet["y"] < this._canvas.height+200){
-                    this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
-                    if (this._hazards.comet["trail"] > 20 && this._hazards.comet["trailSwitch"] == 0){
-                        this._hazards.comet["trail"]-=2;
-                    }
-                    else if (this._hazards.comet["trail"] < 40 && this._hazards.comet["trailSwitch"] == 1){
-                        this._hazards.comet["trail"]+=2;
-                    }
-                    else if (this._hazards.comet["trail"] == 20){
-                        this._hazards.comet["trailSwitch"] = 1;
-                    } 
-                    else if (this._hazards.comet["trail"] == 40){
-                        this._hazards.comet["trailSwitch"] = 0;
-                    }
-                    if (this._playerY <= this._hazards.comet["y"] + this._hazards.comet["trail"] && this._hazards.comet["y"] + this._hazards.comet["trail"] <= this._playerY + 60 && this._playerCollision == 0){
-                        if (this._playerX - 2 <= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 <= this._playerX + 40){
-                            this._playerCollision = 1;
-                        }
-                        else if (this._playerX - 2 >= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._playerX - 2 <= this._hazards.comet["x"] + this._hazards.comet["trail"] - 5){
-                            this._playerCollision = 1;
-                        }
-                    }
-                }
-                else{
-                    if (this._distance < 4900){
-                        this._hazards.cometSummon = this._hazards.cometSummonBasis;
-                    }
-                    this._hazards.comet["y"] = 0;
-                }
-            }
+
             if (this._gammaRaySummon > 0){
                 this._gammaRaySummon--;
             }
