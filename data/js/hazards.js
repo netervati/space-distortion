@@ -33,7 +33,7 @@ var Hazards = /** @class */ (function () {
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
     }
-    Hazards.prototype.update = function (canvasWidth, distance, playerX) {
+    Hazards.prototype.spawnAsteroid = function (canvasWidth, distance, playerX) {
         if (distance < 4900) {
             this.asteroidSummon--;
             if (this.asteroidSummon === 0) {
@@ -63,7 +63,7 @@ var Hazards = /** @class */ (function () {
             this.asteroidDeathParticles = spliceAsteroidDeathParticles_1;
         }
     };
-    Hazards.prototype.adjustDifficulty = function (adjust, distanceMilestone) {
+    Hazards.prototype.adjustSpawnSettings = function (adjust, distanceMilestone) {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;
             if (distanceMilestone > 1000 && this.asteroidSpeedFactor < 18) {
@@ -75,6 +75,43 @@ var Hazards = /** @class */ (function () {
             }
         }
         this.asteroidSummon = this.asteroidSummonBasis;
+    };
+    Hazards.prototype.collideWithAsteroid = function (playerShield, shieldOn, playerX, playerY, asteroid) {
+        var blocked = false;
+        var collided = false;
+        if (playerShield > 50 && shieldOn === 1) {
+            if (playerY - 30 <= asteroid.y + 25 &&
+                asteroid.y + 25 <= playerY + 10) {
+                if (playerX - 18 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 63) {
+                    blocked = true;
+                }
+                else if (playerX - 18 >= asteroid.x - 25 &&
+                    playerX - 18 <= asteroid.x + 35) {
+                    blocked = true;
+                }
+            }
+        }
+        if (blocked === true) {
+            this.asteroidDeathParticles.push({
+                x: asteroid.x,
+                y: asteroid.y,
+                life: 30,
+            });
+        }
+        else {
+            if (playerY <= asteroid.y + 25 && asteroid.y + 25 <= playerY + 60) {
+                if (playerX - 2 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 40) {
+                    collided = true;
+                }
+                else if (playerX - 2 >= asteroid.x - 25 &&
+                    playerX - 2 <= asteroid.x + 35) {
+                    collided = true;
+                }
+            }
+        }
+        return { blocked: blocked, collided: collided };
     };
     Hazards.prototype.reset = function () {
         this.asteroid = [];

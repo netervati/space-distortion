@@ -116,7 +116,7 @@ class Netervati{
                 }
             }
 
-            const proceedHazardUpdate = this._hazards.update(
+            const proceedHazardUpdate = this._hazards.spawnAsteroid(
                 this._canvas.width,
                 this._distance,
                 this._playerX
@@ -134,53 +134,42 @@ class Netervati{
                     adjustHazards = true;
                 }
 
-                this._hazards.adjustDifficulty(
+                this._hazards.adjustSpawnSettings(
                     adjustHazards,
                     this._distanceMilestone
                 );
             }   
 
             if (this._hazards.asteroid.length > 0){
-                let spliceAsteroid = [];
-                let asteroidLength = this._hazards.asteroid.length;
-                for (let av = 0; av < asteroidLength; av++){
-                    this._hazards.asteroid[av]["y"] += this._hazards.asteroid[av]["speed"];
-                    let playerBlock = 0;
-                    if (this._playerShield > 50 && this._shieldOn == 1){
-                        if (this._playerY - 30 <= this._hazards.asteroid[av]["y"] + 25 && this._hazards.asteroid[av]["y"] + 25 <= this._playerY + 10 ){
-                            if (this._playerX - 18 <= this._hazards.asteroid[av]["x"] - 25 && this._hazards.asteroid[av]["x"] - 25 <= this._playerX + 63){
-                                playerBlock = 1;
-                            }
-                            else if (this._playerX - 18 >= this._hazards.asteroid[av]["x"] - 25 && this._playerX - 18 <= this._hazards.asteroid[av]["x"] + 35){
-                                playerBlock = 1;
-                            }
-                        }
-                    }
-                    if (playerBlock == 1){
-                        this._hazards.asteroidDeathParticles.push({x:this._hazards.asteroid[av]["x"],y:this._hazards.asteroid[av]["y"],life:30});
-                        this._playerShield - 50 > 0 ? this._playerShield -= 50 : this._playerShield = 0;
-                        SFX["disintegrate"].play();
-                        continue;
-                    }
-                    else{
-                        if (this._playerY <= this._hazards.asteroid[av]["y"] + 25 && this._hazards.asteroid[av]["y"] + 25 <= this._playerY + 60){
-                            if (this._playerX - 2 <= this._hazards.asteroid[av]["x"] - 25 && this._hazards.asteroid[av]["x"] - 25 <= this._playerX + 40){
-                                this._playerCollision = 1;
-                            }
-                            else if (this._playerX - 2 >= this._hazards.asteroid[av]["x"] - 25 && this._playerX - 2 <= this._hazards.asteroid[av]["x"] + 35){
-                                this._playerCollision = 1;
-                            }
+                const spliceAsteroid = [];
+
+                for (const asteroid of this._hazards.asteroid) {
+                    asteroid.y += asteroid.speed;
+
+                    const { blocked, collided } = this._hazards.collideWithAsteroid(
+                        this._playerShield,
+                        this._shieldOn,
+                        this._playerX,
+                        this._playerY,
+                        asteroid
+                    );
+
+                    if (blocked === true) {
+                        this._playerShield = this._playerShield - 50 || 0;
+                        SFX.disintegrate.play();
+                    } else {
+                        if (collided === true) {
+                            this._playerCollision = 1;
                         }
 
-                        if (this._hazards.asteroid[av]["y"] < this._canvas.height){
-                            spliceAsteroid.push(this._hazards.asteroid[av]);
+                        if (asteroid.y < this._canvas.height){
+                            spliceAsteroid.push(asteroid);
                         }
                     }
+
                 }
-                this._hazards.asteroid = [];
-                if (spliceAsteroid.length > 0){
-                    this._hazards.asteroid = spliceAsteroid;
-                }
+
+                this._hazards.asteroid = spliceAsteroid;
             }
 
             this._hazards.updateDeathParticles();

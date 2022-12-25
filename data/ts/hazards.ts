@@ -50,7 +50,11 @@ export default class Hazards {
         this.cometSpeedFactor = 12;
     }
 
-    update(canvasWidth: number, distance: number, playerX: number): boolean {
+    spawnAsteroid(
+        canvasWidth: number,
+        distance: number,
+        playerX: number,
+    ): boolean {
         if (distance < 4900) {
             this.asteroidSummon--;
 
@@ -87,7 +91,7 @@ export default class Hazards {
         }
     }
 
-    adjustDifficulty(adjust: boolean, distanceMilestone: number): void {
+    adjustSpawnSettings(adjust: boolean, distanceMilestone: number): void {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;
 
@@ -102,6 +106,60 @@ export default class Hazards {
         }
 
         this.asteroidSummon = this.asteroidSummonBasis;
+    }
+
+    collideWithAsteroid(
+        playerShield: number,
+        shieldOn: number,
+        playerX: number,
+        playerY: number,
+        asteroid: Position,
+    ): { blocked: boolean; collided: boolean } {
+        let blocked = false;
+        let collided = false;
+
+        if (playerShield > 50 && shieldOn === 1) {
+            if (
+                playerY - 30 <= asteroid.y + 25 &&
+                asteroid.y + 25 <= playerY + 10
+            ) {
+                if (
+                    playerX - 18 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 63
+                ) {
+                    blocked = true;
+                } else if (
+                    playerX - 18 >= asteroid.x - 25 &&
+                    playerX - 18 <= asteroid.x + 35
+                ) {
+                    blocked = true;
+                }
+            }
+        }
+
+        if (blocked === true) {
+            this.asteroidDeathParticles.push({
+                x: asteroid.x,
+                y: asteroid.y,
+                life: 30,
+            });
+        } else {
+            if (playerY <= asteroid.y + 25 && asteroid.y + 25 <= playerY + 60) {
+                if (
+                    playerX - 2 <= asteroid.x - 25 &&
+                    asteroid.x - 25 <= playerX + 40
+                ) {
+                    collided = true;
+                } else if (
+                    playerX - 2 >= asteroid.x - 25 &&
+                    playerX - 2 <= asteroid.x + 35
+                ) {
+                    collided = true;
+                }
+            }
+        }
+
+        return { blocked, collided };
     }
 
     reset(): void {
