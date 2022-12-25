@@ -77,7 +77,11 @@ export default class Hazards {
         return false;
     }
 
-    spawnComet(canvasHeight: number, distance: number, playerX: number) {
+    spawnComet(
+        canvasHeight: number,
+        distance: number,
+        playerX: number,
+    ): boolean {
         let activeComet = false;
 
         if (this.cometSummon > 0) {
