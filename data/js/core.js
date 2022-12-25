@@ -174,46 +174,24 @@ class Netervati{
 
             this._hazards.updateDeathParticles();
 
-            if (this._hazards.cometSummon > 0){
-                this._hazards.cometSummon--;
-            }
-            else{
-                if (this._hazards.comet["y"] == 0){
-                    if (this._distance < 4900){
-                        this._hazards.comet["x"] = Math.floor(Math.random() * ((this._playerX + 40)-this._playerX)) + this._playerX;
-                        this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
-                    }
-                }
-                else if (this._hazards.comet["y"] < this._canvas.height+200){
-                    this._hazards.comet["y"]+=this._hazards.cometSpeedFactor;
-                    if (this._hazards.comet["trail"] > 20 && this._hazards.comet["trailSwitch"] == 0){
-                        this._hazards.comet["trail"]-=2;
-                    }
-                    else if (this._hazards.comet["trail"] < 40 && this._hazards.comet["trailSwitch"] == 1){
-                        this._hazards.comet["trail"]+=2;
-                    }
-                    else if (this._hazards.comet["trail"] == 20){
-                        this._hazards.comet["trailSwitch"] = 1;
-                    } 
-                    else if (this._hazards.comet["trail"] == 40){
-                        this._hazards.comet["trailSwitch"] = 0;
-                    }
-                    if (this._playerY <= this._hazards.comet["y"] + this._hazards.comet["trail"] && this._hazards.comet["y"] + this._hazards.comet["trail"] <= this._playerY + 60 && this._playerCollision == 0){
-                        if (this._playerX - 2 <= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 <= this._playerX + 40){
-                            this._playerCollision = 1;
-                        }
-                        else if (this._playerX - 2 >= this._hazards.comet["x"] - this._hazards.comet["trail"] + 5 && this._playerX - 2 <= this._hazards.comet["x"] + this._hazards.comet["trail"] - 5){
-                            this._playerCollision = 1;
-                        }
-                    }
-                }
-                else{
-                    if (this._distance < 4900){
-                        this._hazards.cometSummon = this._hazards.cometSummonBasis;
-                    }
-                    this._hazards.comet["y"] = 0;
+            const activeComet = this._hazards.spawnComet(
+                this._canvas.height,
+                this._distance,
+                this._playerX
+            );
+
+            if (activeComet === true) {
+                const collided = this._hazards.collideWithComet(
+                    this._playerCollision,
+                    this._playerX,
+                    this._playerY
+                );
+
+                if (collided === true) {
+                    this._playerCollision = 1;
                 }
             }
+
             if (this._gammaRaySummon > 0){
                 this._gammaRaySummon--;
             }

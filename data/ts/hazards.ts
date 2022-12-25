@@ -77,6 +77,48 @@ export default class Hazards {
         return false;
     }
 
+    spawnComet(canvasHeight: number, distance: number, playerX: number) {
+        let activeComet = false;
+
+        if (this.cometSummon > 0) {
+            this.cometSummon--;
+        } else {
+            if (this.comet.y === 0) {
+                if (distance < 4900) {
+                    this.comet.x =
+                        Math.floor(Math.random() * (playerX + 40 - playerX)) +
+                        playerX;
+                    this.comet.y += this.cometSpeedFactor;
+                }
+            } else if (this.comet.y < canvasHeight + 200) {
+                this.comet.y += this.cometSpeedFactor;
+
+                if (this.comet.trail > 20 && this.comet.trailSwitch === 0) {
+                    this.comet.trail -= 2;
+                } else if (
+                    this.comet.trail < 40 &&
+                    this.comet.trailSwitch === 1
+                ) {
+                    this.comet.trail += 2;
+                } else if (this.comet.trail === 20) {
+                    this.comet.trailSwitch = 1;
+                } else if (this.comet.trail === 40) {
+                    this.comet.trailSwitch = 0;
+                }
+
+                activeComet = true;
+            } else {
+                if (distance < 4900) {
+                    this.cometSummon = this.cometSummonBasis;
+                }
+
+                this.comet.y = 0;
+            }
+        }
+
+        return activeComet;
+    }
+
     updateDeathParticles() {
         if (this.asteroidDeathParticles.length > 0) {
             const spliceAsteroidDeathParticles: ADPStructure[] = [];
@@ -160,6 +202,34 @@ export default class Hazards {
         }
 
         return { blocked, collided };
+    }
+
+    collideWithComet(
+        playerCollision: number,
+        playerX: number,
+        playerY: number,
+    ): boolean {
+        let collided = false;
+
+        if (
+            playerY <= this.comet.y + this.comet.trail &&
+            this.comet.y + this.comet.trail <= playerY + 60 &&
+            playerCollision === 0
+        ) {
+            if (
+                playerX - 2 <= this.comet.x - this.comet.trail + 5 &&
+                this.comet.x - this.comet.trail + 5 <= playerX + 40
+            ) {
+                collided = true;
+            } else if (
+                playerX - 2 >= this.comet.x - this.comet.trail + 5 &&
+                playerX - 2 <= this.comet.x + this.comet.trail - 5
+            ) {
+                collided = true;
+            }
+        }
+
+        return collided;
     }
 
     reset(): void {
