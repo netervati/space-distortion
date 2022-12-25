@@ -73,6 +73,20 @@ export default class Hazards {
         return false;
     }
 
+    updateDeathParticles() {
+        if (this.asteroidDeathParticles.length > 0) {
+            const spliceAsteroidDeathParticles: ADPStructure[] = [];
+            this.asteroidDeathParticles.forEach((adp) => {
+                if (adp.life > 0) {
+                    adp.life--;
+                    spliceAsteroidDeathParticles.push(adp);
+                }
+            });
+
+            this.asteroidDeathParticles = spliceAsteroidDeathParticles;
+        }
+    }
+
     adjustDifficulty(adjust: boolean, distanceMilestone: number): void {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;

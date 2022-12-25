@@ -51,6 +51,18 @@ var Hazards = /** @class */ (function () {
         }
         return false;
     };
+    Hazards.prototype.updateDeathParticles = function () {
+        if (this.asteroidDeathParticles.length > 0) {
+            var spliceAsteroidDeathParticles_1 = [];
+            this.asteroidDeathParticles.forEach(function (adp) {
+                if (adp.life > 0) {
+                    adp.life--;
+                    spliceAsteroidDeathParticles_1.push(adp);
+                }
+            });
+            this.asteroidDeathParticles = spliceAsteroidDeathParticles_1;
+        }
+    };
     Hazards.prototype.adjustDifficulty = function (adjust, distanceMilestone) {
         if (adjust === true) {
             this.asteroidSummonBasis -= 25;

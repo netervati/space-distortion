@@ -182,20 +182,9 @@ class Netervati{
                     this._hazards.asteroid = spliceAsteroid;
                 }
             }
-            if (this._hazards.asteroidDeathParticles.length > 0){
-                let spliceAsteroidDeathParticles = [];
-                let asteroidDeathParticlesLength = this._hazards.asteroidDeathParticles.length;
-                for (let ad = 0; ad < asteroidDeathParticlesLength; ad++){
-                    if (this._hazards.asteroidDeathParticles[ad]["life"] > 0){
-                        this._hazards.asteroidDeathParticles[ad]["life"]--;
-                        spliceAsteroidDeathParticles.push(this._hazards.asteroidDeathParticles[ad]);
-                    }
-                }
-                this._hazards.asteroidDeathParticles = [];
-                if (spliceAsteroidDeathParticles.length > 0){
-                    this._hazards.asteroidDeathParticles = spliceAsteroidDeathParticles;
-                }
-            }
+
+            this._hazards.updateDeathParticles();
+
             if (this._hazards.cometSummon > 0){
                 this._hazards.cometSummon--;
             }
