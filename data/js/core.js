@@ -194,7 +194,7 @@ class Netervati{
                     this._playerCollision = 1;
                 }
 
-                if (this._hazards.gammaRayExpansion == 120){
+                if (this._hazards.gammaRayExpansion === 120){
                     SFX.dissipate.play();
                 }
             }
