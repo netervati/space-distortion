@@ -27,7 +27,7 @@ KeyboardController({
         }
     },
     'KeyR': () => {
-        if (appGame._playerDead == 1){
+        if (appGame._player.dead === 1){
             appGame.reload();
         }
     }

@@ -1,5 +1,6 @@
 import Hazards from './hazards.js';
 import Particles from './particles.js';
+import Player from './player.js';
 import setStage from './stage.js';
 import Wave from './wave.js';
 import { IMG, SFX } from './assets.js';
@@ -20,18 +21,15 @@ class Netervati{
         this._endingCutscene = 0;
         this._gameOver = 0;
 
-        this._playerX = (this._canvas.width / 2) - 25;
-        this._playerY = this._canvas.height - 150;
-        this._playerShield = 100;
-        this._shieldOn = 0;
-        this._curShieldOn = 0;
-        this._playerCollision = 0;
-        this._playerDeathDelay = 75;
-        this._playerDead = 0;
+        this._player = new Player(
+            this._canvas.width / 2 - 25,
+            this._canvas.height - 150,
+        );
+
         this._distance = 0;
         this._distanceMilestone = 100;
 
-        this._particles = new Particles(this._playerX);
+        this._particles = new Particles(this._player.x);
         this._wave = new Wave();
         this._hazards = new Hazards();
 
@@ -44,41 +42,34 @@ class Netervati{
     reload(){
         this._particles.reset();
         this._hazards.reset();
+        this._player.reset();
 
         this._gameOver = 0;
-        this._playerX = (this._canvas.width / 2) - 25;
-        this._playerY = this._canvas.height - 150;
-        this._playerShield = 100;
-        this._shieldOn = 0;
-        this._curShieldOn = 0;
-        this._playerCollision = 0;
-        this._playerDeathDelay = 75;
-        this._playerDead = 0;
         this._distance = 0;
         this._distanceMilestone = 100;
         SFX["gammaRay"].pause();
         SFX["gammaRay"].currentTime = 0;
     }
     logKey(pv){
-        if (this._playerCollision == 0){
+        if (this._player.collision == 0){
             if (pv["type"] == "movement"){
                 if (pv["direction"] == "right"){
-                    if (this._playerX + 3 + 16 < this._canvas.width - 25){
-                        this._playerX+= 3;
+                    if (this._player.x + 3 + 16 < this._canvas.width - 25){
+                        this._player.x+= 3;
                     }
                 }
                 else if (pv["direction"] == "left"){
-                    if (this._playerX - 3 > 0){
-                        this._playerX -= 3;
+                    if (this._player.x - 3 > 0){
+                        this._player.x -= 3;
                     }
                 }
             }
             else if (pv["type"] == "shield"){
-                if (this._shieldOn == 0 && this._gameStart == 1 && this._distance < 4900){
-                    this._shieldOn = 1;
-                    if (this._playerShield > 0){
-                        this._playerShield--;
-                        this._curShieldOn = this._playerShield;
+                if (this._player.shieldOn == 0 && this._gameStart == 1 && this._distance < 4900){
+                    this._player.shieldOn = 1;
+                    if (this._player.shield > 0){
+                        this._player.shield--;
+                        this._player.curShieldOn = this._player.shield;
                         SFX["shield"].play();
                     }
                 }
@@ -87,26 +78,26 @@ class Netervati{
     }
     async update(){
         this._wave.update();
-        this._particles.update(this._canvas.height, this._playerX);
+        this._particles.update(this._canvas.height, this._player.x);
 
         await this.render();
 
         if (this._gameStart == 1 && this._gameOver == 0){
-            if (this._shieldOn == 0){
-                if (this._playerShield < 100){
-                    this._playerShield+=0.25;
+            if (this._player.shieldOn == 0){
+                if (this._player.shield < 100){
+                    this._player.shield+=0.25;
                 }
             }
             else{
-                if (this._playerShield > 0){
-                    this._playerShield--;
+                if (this._player.shield > 0){
+                    this._player.shield--;
                 }
             }
 
             const proceedHazardUpdate = this._hazards.spawnAsteroid(
                 this._canvas.width,
                 this._distance,
-                this._playerX
+                this._player.x
             )
 
             if (proceedHazardUpdate == true) {
@@ -134,19 +125,19 @@ class Netervati{
                     asteroid.y += asteroid.speed;
 
                     const { blocked, collided } = this._hazards.collideWithAsteroid(
-                        this._playerShield,
-                        this._shieldOn,
-                        this._playerX,
-                        this._playerY,
+                        this._player.shield,
+                        this._player.shieldOn,
+                        this._player.x,
+                        this._player.y,
                         asteroid
                     );
 
                     if (blocked === true) {
-                        this._playerShield = this._playerShield - 50 || 0;
+                        this._player.shield = this._player.shield - 50 || 0;
                         SFX.disintegrate.play();
                     } else {
                         if (collided === true) {
-                            this._playerCollision = 1;
+                            this._player.collision = 1;
                         }
 
                         if (asteroid.y < this._canvas.height){
@@ -164,18 +155,18 @@ class Netervati{
             const activeComet = this._hazards.spawnComet(
                 this._canvas.height,
                 this._distance,
-                this._playerX
+                this._player.x
             );
 
             if (activeComet === true) {
                 const collided = this._hazards.collideWithComet(
-                    this._playerCollision,
-                    this._playerX,
-                    this._playerY
+                    this._player.collision,
+                    this._player.x,
+                    this._player.y
                 );
 
                 if (collided === true) {
-                    this._playerCollision = 1;
+                    this._player.collision = 1;
                 }
             }
 
@@ -188,10 +179,10 @@ class Netervati{
             if (gammaState === 'starting') {
                 SFX.gammaRay.play();
             } else if (gammaState === 'expanding') {
-                const collided = this._hazards.collideWithGammaRay(this._playerX);
+                const collided = this._hazards.collideWithGammaRay(this._player.x);
 
                 if (collided === true) {
-                    this._playerCollision = 1;
+                    this._player.collision = 1;
                 }
 
                 if (this._hazards.gammaRayExpansion === 120){
@@ -199,7 +190,7 @@ class Netervati{
                 }
             }
 
-            if (this._playerCollision == 0){
+            if (this._player.collision == 0){
                 this._distance++;
                 if (this._distance == 5000){
                     this._gameOver = 1;
@@ -211,20 +202,20 @@ class Netervati{
                 }
             }
             else{ 
-                if (this._playerDeathDelay > 0){
-                    this._playerDeathDelay--;
-                    if (this._playerDeathDelay < 25){
-                        this._playerY+=6;
+                if (this._player.deathDelay > 0){
+                    this._player.deathDelay--;
+                    if (this._player.deathDelay < 25){
+                        this._player.y+=6;
                     }
-                    else if (this._playerDeathDelay < 15){
-                        this._playerY+=15;
+                    else if (this._player.deathDelay < 15){
+                        this._player.y+=15;
                     }
-                    if (this._playerDeathDelay == 74){
+                    if (this._player.deathDelay == 74){
                         SFX["explosion"].play();
                     }
                 }
                 else{
-                    this._playerDead = 1;
+                    this._player.dead = 1;
                 }
             }
         }
@@ -243,13 +234,13 @@ class Netervati{
                 this._endingCutscene++;
             }
         }
-        if (this._curShieldOn != 0){
-            if (this._curShieldOn - this._playerShield > 50 || this._playerShield <= 0){
-                this._curShieldOn = 0;
+        if (this._player.curShieldOn != 0){
+            if (this._player.curShieldOn - this._player.shield > 50 || this._player.shield <= 0){
+                this._player.curShieldOn = 0;
             }
         }
         else{
-            this._shieldOn = 0;
+            this._player.shieldOn = 0;
         }
         if (this._loadCutscene == 1 && this._initialCutscene < 600){
             this._initialCutscene++;
@@ -291,26 +282,26 @@ class Netervati{
         this._wave.render(this._ctx, this._canvas.width, this._canvas.height);
         this._hazards.renderGammaRay(this._ctx, this._canvas.height);
 
-        if (this._playerDead == 0){
-            if (this._playerCollision == 0){
-                this._particles.renderShipBoosters(this._ctx, this._playerY);
+        if (this._player.dead == 0){
+            if (this._player.collision == 0){
+                this._particles.renderShipBoosters(this._ctx, this._player.y);
             }
 
             this._ctx.save();
             this._ctx.beginPath();
-            this._ctx.moveTo(this._playerX+18,this._playerY - 5);
-            this._ctx.lineTo(this._playerX-15,(this._playerY - 10) + 50);
-            this._ctx.lineTo(this._playerX-25,(this._playerY - 10) + 50);
-            this._ctx.lineTo(this._playerX-40,(this._playerY - 10) + 70);
-            this._ctx.lineTo(this._playerX+18,(this._playerY - 10) + 70);
-            this._ctx.lineTo(this._playerX+18,(this._playerY - 10) + 80);
-            this._ctx.lineTo(this._playerX+22,(this._playerY - 10) + 80);
-            this._ctx.lineTo(this._playerX+22,(this._playerY - 10) + 70);
-            this._ctx.lineTo(this._playerX+80,(this._playerY - 10) + 70);
-            this._ctx.lineTo(this._playerX+65,(this._playerY - 10) + 50);
-            this._ctx.lineTo(this._playerX+55,(this._playerY - 10) + 50);
-            this._ctx.lineTo(this._playerX+22,this._playerY - 5);
-            this._ctx.lineTo(this._playerX+17,this._playerY - 5);
+            this._ctx.moveTo(this._player.x+18,this._player.y - 5);
+            this._ctx.lineTo(this._player.x-15,(this._player.y - 10) + 50);
+            this._ctx.lineTo(this._player.x-25,(this._player.y - 10) + 50);
+            this._ctx.lineTo(this._player.x-40,(this._player.y - 10) + 70);
+            this._ctx.lineTo(this._player.x+18,(this._player.y - 10) + 70);
+            this._ctx.lineTo(this._player.x+18,(this._player.y - 10) + 80);
+            this._ctx.lineTo(this._player.x+22,(this._player.y - 10) + 80);
+            this._ctx.lineTo(this._player.x+22,(this._player.y - 10) + 70);
+            this._ctx.lineTo(this._player.x+80,(this._player.y - 10) + 70);
+            this._ctx.lineTo(this._player.x+65,(this._player.y - 10) + 50);
+            this._ctx.lineTo(this._player.x+55,(this._player.y - 10) + 50);
+            this._ctx.lineTo(this._player.x+22,this._player.y - 5);
+            this._ctx.lineTo(this._player.x+17,this._player.y - 5);
             this._ctx.strokeStyle = "white";
             this._ctx.lineWidth = 4;
             this._ctx.stroke();
@@ -318,17 +309,17 @@ class Netervati{
             this._ctx.fill();
 
             this._ctx.beginPath();
-            this._ctx.moveTo(this._playerX,this._playerY + 20);
-            this._ctx.lineTo(this._playerX,this._playerY + 60);
-            this._ctx.quadraticCurveTo(this._playerX + 5, this._playerY+ 60 + 4, this._playerX + 10, this._playerY + 60);
-            this._ctx.quadraticCurveTo(this._playerX + 20, this._playerY+ 60 + 8, this._playerX + 30, this._playerY + 60);
-            this._ctx.quadraticCurveTo(this._playerX + 35, this._playerY+ 60 + 4, this._playerX + 40, this._playerY + 60);
-            this._ctx.lineTo(this._playerX+40,this._playerY + 20);
-            this._ctx.lineTo(this._playerX+25,this._playerY + 20);
-            this._ctx.lineTo(this._playerX+25,this._playerY);
-            this._ctx.lineTo(this._playerX+15,this._playerY);
-            this._ctx.lineTo(this._playerX+15,this._playerY + 20);
-            this._ctx.lineTo(this._playerX-1.75,this._playerY + 20);
+            this._ctx.moveTo(this._player.x,this._player.y + 20);
+            this._ctx.lineTo(this._player.x,this._player.y + 60);
+            this._ctx.quadraticCurveTo(this._player.x + 5, this._player.y+ 60 + 4, this._player.x + 10, this._player.y + 60);
+            this._ctx.quadraticCurveTo(this._player.x + 20, this._player.y+ 60 + 8, this._player.x + 30, this._player.y + 60);
+            this._ctx.quadraticCurveTo(this._player.x + 35, this._player.y+ 60 + 4, this._player.x + 40, this._player.y + 60);
+            this._ctx.lineTo(this._player.x+40,this._player.y + 20);
+            this._ctx.lineTo(this._player.x+25,this._player.y + 20);
+            this._ctx.lineTo(this._player.x+25,this._player.y);
+            this._ctx.lineTo(this._player.x+15,this._player.y);
+            this._ctx.lineTo(this._player.x+15,this._player.y + 20);
+            this._ctx.lineTo(this._player.x-1.75,this._player.y + 20);
             this._ctx.strokeStyle = "white";
             this._ctx.lineWidth = 4;
             this._ctx.stroke();
@@ -336,17 +327,17 @@ class Netervati{
             this._ctx.fill();
             this._ctx.restore();
 
-            if (this._playerShield > 0 && this._shieldOn == 1){
+            if (this._player.shield > 0 && this._player.shieldOn == 1){
                 this._ctx.save();
-                this._ctx.globalAlpha = this._playerShield > 50 ? 1 : this._playerShield > 30 ? 0.1 : 0.05;
+                this._ctx.globalAlpha = this._player.shield > 50 ? 1 : this._player.shield > 30 ? 0.1 : 0.05;
                 this._ctx.beginPath();
                 this._ctx.shadowBlur = 5;
                 this._ctx.shadowColor = "yellow";
-                this._ctx.moveTo(this._playerX - 15,this._playerY - 30);
-                this._ctx.lineTo(this._playerX - 18,this._playerY - 28);
-                this._ctx.lineTo(this._playerX + 63,this._playerY - 28);
-                this._ctx.lineTo(this._playerX + 60,this._playerY - 30);
-                this._ctx.lineTo(this._playerX - 16,this._playerY - 30);
+                this._ctx.moveTo(this._player.x - 15,this._player.y - 30);
+                this._ctx.lineTo(this._player.x - 18,this._player.y - 28);
+                this._ctx.lineTo(this._player.x + 63,this._player.y - 28);
+                this._ctx.lineTo(this._player.x + 60,this._player.y - 30);
+                this._ctx.lineTo(this._player.x - 16,this._player.y - 30);
                 this._ctx.strokeStyle = "white";
                 this._ctx.lineWidth = 4;
                 this._ctx.stroke();
@@ -355,12 +346,12 @@ class Netervati{
                 this._ctx.restore();
             }
 
-            if (this._playerDeathDelay < 75){
+            if (this._player.deathDelay < 75){
                 this._particles.renderShipExplosions(
                     this._ctx,
-                    this._playerDeathDelay,
-                    this._playerX,
-                    this._playerY
+                    this._player.deathDelay,
+                    this._player.x,
+                    this._player.y
                 );
             }
         }
@@ -371,9 +362,9 @@ class Netervati{
         this._ctx.beginPath();
         this._ctx.shadowBlur = 10;
         this._ctx.globalAlpha = this._gameStart == 1 ? 1 : 0;
-        this._ctx.shadowColor = this._playerShield > 50 ? "yellow" : "white";
-        this._ctx.fillStyle = this._playerShield > 50 ? "white" : "red";
-        this._ctx.fillRect(60,10,this._playerShield,8);
+        this._ctx.shadowColor = this._player.shield > 50 ? "yellow" : "white";
+        this._ctx.fillStyle = this._player.shield > 50 ? "white" : "red";
+        this._ctx.fillRect(60,10,this._player.shield,8);
         this._ctx.restore();
 
         let addMargin = 16; 
@@ -390,7 +381,7 @@ class Netervati{
             this._ctx.restore();
         }
         
-        if (this._playerDead == 1){
+        if (this._player.dead == 1){
             this._ctx.drawImage(IMG.restart, 0, 0, 112, 9, (this._canvas.width / 2) - 112, (this._canvas.height / 2) - 9, 218, 16);
         }
 
