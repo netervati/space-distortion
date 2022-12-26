@@ -21,6 +21,20 @@ var Player = /** @class */ (function () {
         this.deathDelay = 75;
         this.dead = 0;
     };
+    Player.prototype.updateDeathState = function () {
+        if (this.deathDelay > 0) {
+            this.deathDelay--;
+            if (this.deathDelay < 25) {
+                this.y += 6;
+            }
+            else if (this.deathDelay < 15) {
+                this.y += 15;
+            }
+        }
+        else {
+            this.dead = 1;
+        }
+    };
     return Player;
 }());
 export default Player;

@@ -33,4 +33,18 @@ export default class Player {
         this.deathDelay = 75;
         this.dead = 0;
     }
+
+    updateDeathState() {
+        if (this.deathDelay > 0) {
+            this.deathDelay--;
+
+            if (this.deathDelay < 25) {
+                this.y += 6;
+            } else if (this.deathDelay < 15) {
+                this.y += 15;
+            }
+        } else {
+            this.dead = 1;
+        }
+    }
 }

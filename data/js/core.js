@@ -201,21 +201,11 @@ class Netervati{
                     }
                 }
             }
-            else{ 
-                if (this._player.deathDelay > 0){
-                    this._player.deathDelay--;
-                    if (this._player.deathDelay < 25){
-                        this._player.y+=6;
-                    }
-                    else if (this._player.deathDelay < 15){
-                        this._player.y+=15;
-                    }
-                    if (this._player.deathDelay == 74){
-                        SFX["explosion"].play();
-                    }
-                }
-                else{
-                    this._player.dead = 1;
+            else{
+                this._player.updateDeathState();
+
+                if (this._player.deathDelay === 74) {
+                    SFX.explosion.play();
                 }
             }
         }
