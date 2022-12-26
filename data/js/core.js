@@ -304,88 +304,14 @@ class Netervati{
             this._ctx.drawImage(IMG.numbers, stringNum.charAt(i) * 9, 0, 9, 9, fontXmargin, 30, 24, 24);
             this._ctx.restore();
         }
-        
-        if (this._player.dead == 1){
-            this._ctx.drawImage(IMG.restart, 0, 0, 112, 9, (this._canvas.width / 2) - 112, (this._canvas.height / 2) - 9, 218, 16);
-        }
 
-        if (this._cutscenes.load == 0){
-            this._ctx.drawImage(IMG.title, 0, 0, 186, 22, (this._canvas.width / 2) - 186, (this._canvas.height / 2) - 50, 372, 44);
-            this._ctx.drawImage(IMG.begin, 0, 0, 125, 9, (this._canvas.width / 2) - 125, (this._canvas.height / 2) + 10, 250, 16);
-        }
-
-        if (this._cutscenes.init >= 100 && this._cutscenes.init < 188){
-            this._ctx.save();
-            this._ctx.globalAlpha = this._cutscenes.warningCurAlpha;
-            this._ctx.drawImage(IMG.warning, 0, 0, 56, 18, (this._canvas.width / 2) - 56, (this._canvas.height / 2) - 9, 112, 40);
-            this._ctx.restore();
-        }
-        
-        if (this._cutscenes.init >= 200 && this._cutscenes.init < 350){
-            let frameCount = 0;
-            if (this._cutscenes.init < 258){
-                if (this._cutscenes.init % 2 > 0){
-                    frameCount++;
-                }
-                frameCount =this._cutscenes.init - 200;
-                frameCount/=2;
-            }
-            else{
-                frameCount = 258;
-            }
-            this._ctx.drawImage(IMG.introa, 0, 0, 9 * (frameCount + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCount + 1)) * 2, 40);
-        }
-
-        if (this._cutscenes.init >= 360 && this._cutscenes.init < 470){
-            let frameCountB = 0;
-            if (this._cutscenes.init < 470){
-                if (this._cutscenes.init % 2 > 0){
-                    frameCountB++;
-                }
-                frameCountB =this._cutscenes.init - 360;
-                frameCountB/=2;
-            }
-            else{
-                frameCountB = 470;
-            }
-            this._ctx.drawImage(IMG.introb, 0, 0, 9 * (frameCountB + 1), 26, (this._canvas.width / 2) - 141, (this._canvas.height / 2) - 13, (9 * (frameCountB + 1)) * 2, 40);
-        }
-
-        if (this._cutscenes.init >= 480 && this._cutscenes.init < 600){
-            let frameCountC = 0;
-            if (this._cutscenes.init < 600){
-                if (this._cutscenes.init % 2 > 0){
-                    frameCountC++;
-                }
-                frameCountC =this._cutscenes.init - 480;
-                frameCountC/=2;
-            }
-            else{
-                frameCountC = 600;
-            }
-            this._ctx.drawImage(IMG.introc, 0, 0, 9 * (frameCountC + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCountC + 1)) * 2, 40);
-        }
-
-        if (this._gameOver == 1){
-            if (this._cutscenes.ending < 100){
-                let frameCountD = 0;
-                if (this._cutscenes.ending < 600){
-                    if (this._cutscenes.ending % 2 > 0){
-                        frameCountD++;
-                    }
-                    frameCountD =this._cutscenes.ending;
-                    frameCountD/=2;
-                }
-                else{
-                    frameCountD = 100;
-                }
-                this._ctx.drawImage(IMG.end, 0, 0, 9 * (frameCountD + 1), 26, (this._canvas.width / 2) - 125, (this._canvas.height / 2) - 13, (9 * (frameCountD + 1)) * 2, 40);
-            }
-            if (this._cutscenes.ending >= 150){
-                this._ctx.drawImage(IMG.thanks, 0, 0, 120, 26, (this._canvas.width / 2) - 120, (this._canvas.height / 2) - 9, 240, 40);
-            }
-        }
-
+        this._cutscenes.render(
+            this._ctx,
+            this._canvas.width,
+            this._canvas.height,
+            this._gameOver,
+            this._player.dead,
+        );
     }
 }
 
