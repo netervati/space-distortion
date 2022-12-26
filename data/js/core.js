@@ -289,44 +289,7 @@ class Netervati{
 
         this._particles.renderStarPositions(this._ctx);
         this._wave.render(this._ctx, this._canvas.width, this._canvas.height);
-
-        if (this._hazards.gammaRayInitialTransition > 0){
-            this._ctx.save();
-            this._ctx.beginPath();
-            this._ctx.shadowBlur = 10;
-            this._ctx.shadowColor = "green";
-            this._ctx.moveTo(this._hazards.gammaRayX,this._canvas.height + 5000);
-            let moveToEnd = this._hazards.gammaRayInitialTransition > 0 ? this._canvas.height + 5000 - this._hazards.gammaRayInitialTransition : 0;
-            this._ctx.lineTo(this._hazards.gammaRayX,moveToEnd);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.restore();
-        }
-        if (this._hazards.gammaRayExpansion > 0){
-            this._ctx.save();
-            this._ctx.beginPath();
-            this._ctx.shadowBlur = 10;
-            this._ctx.shadowColor = "green";
-            this._ctx.fillStyle = "white";
-            this._ctx.fillRect(this._hazards.gammaRayX-this._hazards.gammaRayExpansion,0,this._hazards.gammaRayExpansion+(this._hazards.gammaRayExpansion/2),this._canvas.height);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.restore();
-        }
-        if (this._hazards.gammaRayDissipate > 0){
-            this._ctx.save();
-            this._ctx.beginPath();
-            this._ctx.shadowBlur = 10;
-            this._ctx.shadowColor = "green";
-            this._ctx.fillStyle = "white";
-            this._ctx.fillRect(this._hazards.gammaRayX-this._hazards.gammaRayDissipate,0,this._hazards.gammaRayDissipate+(this._hazards.gammaRayDissipate/2),this._canvas.height);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.restore();
-        }
+        this._hazards.renderGammaRay(this._ctx, this._canvas.height);
 
         if (this._playerDead == 0){
             if (this._playerCollision == 0){

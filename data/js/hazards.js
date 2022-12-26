@@ -303,6 +303,47 @@ var Hazards = /** @class */ (function () {
             ctx.restore();
         }
     };
+    Hazards.prototype.renderGammaRay = function (ctx, canvasHeight) {
+        if (this.gammaRayInitialTransition > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.moveTo(this.gammaRayX, canvasHeight + 5000);
+            var moveToEnd = this.gammaRayInitialTransition > 0
+                ? canvasHeight + 5000 - this.gammaRayInitialTransition
+                : 0;
+            ctx.lineTo(this.gammaRayX, moveToEnd);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+        if (this.gammaRayExpansion > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(this.gammaRayX - this.gammaRayExpansion, 0, this.gammaRayExpansion + this.gammaRayExpansion / 2, canvasHeight);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+        if (this.gammaRayDissipate > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(this.gammaRayX - this.gammaRayDissipate, 0, this.gammaRayDissipate + this.gammaRayDissipate / 2, canvasHeight);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
     return Hazards;
 }());
 export default Hazards;
