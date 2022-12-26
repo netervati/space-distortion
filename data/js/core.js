@@ -35,13 +35,6 @@ class Netervati{
         this._wave = new Wave();
         this._hazards = new Hazards();
 
-        this._gammaRaySummon = 600;
-        this._gammaRayX = 0;
-        this._gammaRayInitialTransition = 0;
-        this._gammaRayExpansion = 0;
-        this._gammaRayDissipate = 0;
-        this._gammaRayParticleSpread = 200;
-
         this.update();
     }
     beginGame(){
@@ -52,12 +45,6 @@ class Netervati{
         this._particles.reset();
         this._hazards.reset();
 
-        this._gammaRaySummon = 600;
-        this._gammaRayX = 0;
-        this._gammaRayInitialTransition = 0;
-        this._gammaRayExpansion = 0;
-        this._gammaRayDissipate = 0;
-        this._gammaRayParticleSpread = 200;
         this._gameOver = 0;
         this._playerX = (this._canvas.width / 2) - 25;
         this._playerY = this._canvas.height - 150;
@@ -192,53 +179,26 @@ class Netervati{
                 }
             }
 
-            if (this._gammaRaySummon > 0){
-                this._gammaRaySummon--;
-            }
-            else{
-                if (this._gammaRayDissipate == 0){
-                    if (this._gammaRayExpansion == 0){
-                        if (this._distance < 4900){
-                            if (this._gammaRayInitialTransition < this._canvas.height + 5000){
-                                if (this._gammaRayX == 0){
-                                    this._gammaRayX = Math.floor(Math.random() * (this._canvas.width-200)) + 100;
-                                }
-                                this._gammaRayInitialTransition+=30;
-                            }
-                            else{
-                                this._gammaRayInitialTransition = 0;
-                                this._gammaRayExpansion++;
-                                SFX["gammaRay"].play();
-                            }
-                        }
-                    }
-                    else if (this._gammaRayExpansion < 125){
-                        this._gammaRayExpansion ++;
-                        if (this._playerX - 2 <= this._gammaRayX - this._gammaRayExpansion && this._gammaRayX - this._gammaRayExpansion <= this._playerX + 40){
-                            this._playerCollision = 1;
-                        }
-                        else if (this._playerX - 2 >= this._gammaRayX - this._gammaRayExpansion && this._playerX - 2 <= this._gammaRayX + (this._gammaRayExpansion/2)){
-                            this._playerCollision = 1;
-                        }
-                        if (this._gammaRayExpansion == 120){
-                            SFX["dissipate"].play();
-                        }
-                    }   
-                    else{
-                        this._gammaRayDissipate = 50;
-                        this._gammaRayExpansion = 0;
-                    }
+            const gammaState = this._hazards.updateGammaRay(
+                this._canvas.height,
+                this._canvas.width,
+                this._distance
+            );
+
+            if (gammaState === 'starting') {
+                SFX.gammaRay.play();
+            } else if (gammaState === 'expanding') {
+                const collided = this._hazards.collideWithGammaRay(this._playerX);
+
+                if (collided === true) {
+                    this._playerCollision = 1;
                 }
-                else{
-                    this._gammaRayDissipate-=5;
-                    if (this._gammaRayDissipate <= 0){
-                        if (this._distance < 4900){
-                            this._gammaRaySummon = 600;
-                            this._gammaRayX = 0;
-                        }
-                    }
+
+                if (this._hazards.gammaRayExpansion == 120){
+                    SFX.dissipate.play();
                 }
             }
+
             if (this._playerCollision == 0){
                 this._distance++;
                 if (this._distance == 5000){
@@ -330,38 +290,38 @@ class Netervati{
         this._particles.renderStarPositions(this._ctx);
         this._wave.render(this._ctx, this._canvas.width, this._canvas.height);
 
-        if (this._gammaRayInitialTransition > 0){
+        if (this._hazards.gammaRayInitialTransition > 0){
             this._ctx.save();
             this._ctx.beginPath();
             this._ctx.shadowBlur = 10;
             this._ctx.shadowColor = "green";
-            this._ctx.moveTo(this._gammaRayX,this._canvas.height + 5000);
-            let moveToEnd = this._gammaRayInitialTransition > 0 ? this._canvas.height + 5000 - this._gammaRayInitialTransition : 0;
-            this._ctx.lineTo(this._gammaRayX,moveToEnd);
+            this._ctx.moveTo(this._hazards.gammaRayX,this._canvas.height + 5000);
+            let moveToEnd = this._hazards.gammaRayInitialTransition > 0 ? this._canvas.height + 5000 - this._hazards.gammaRayInitialTransition : 0;
+            this._ctx.lineTo(this._hazards.gammaRayX,moveToEnd);
             this._ctx.strokeStyle = "white";
             this._ctx.lineWidth = 4;
             this._ctx.stroke();
             this._ctx.restore();
         }
-        if (this._gammaRayExpansion > 0){
+        if (this._hazards.gammaRayExpansion > 0){
             this._ctx.save();
             this._ctx.beginPath();
             this._ctx.shadowBlur = 10;
             this._ctx.shadowColor = "green";
             this._ctx.fillStyle = "white";
-            this._ctx.fillRect(this._gammaRayX-this._gammaRayExpansion,0,this._gammaRayExpansion+(this._gammaRayExpansion/2),this._canvas.height);
+            this._ctx.fillRect(this._hazards.gammaRayX-this._hazards.gammaRayExpansion,0,this._hazards.gammaRayExpansion+(this._hazards.gammaRayExpansion/2),this._canvas.height);
             this._ctx.strokeStyle = "white";
             this._ctx.lineWidth = 4;
             this._ctx.stroke();
             this._ctx.restore();
         }
-        if (this._gammaRayDissipate > 0){
+        if (this._hazards.gammaRayDissipate > 0){
             this._ctx.save();
             this._ctx.beginPath();
             this._ctx.shadowBlur = 10;
             this._ctx.shadowColor = "green";
             this._ctx.fillStyle = "white";
-            this._ctx.fillRect(this._gammaRayX-this._gammaRayDissipate,0,this._gammaRayDissipate+(this._gammaRayDissipate/2),this._canvas.height);
+            this._ctx.fillRect(this._hazards.gammaRayX-this._hazards.gammaRayDissipate,0,this._hazards.gammaRayDissipate+(this._hazards.gammaRayDissipate/2),this._canvas.height);
             this._ctx.strokeStyle = "white";
             this._ctx.lineWidth = 4;
             this._ctx.stroke();
