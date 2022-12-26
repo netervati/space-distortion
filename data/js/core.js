@@ -277,64 +277,7 @@ class Netervati{
                 this._particles.renderShipBoosters(this._ctx, this._player.y);
             }
 
-            this._ctx.save();
-            this._ctx.beginPath();
-            this._ctx.moveTo(this._player.x+18,this._player.y - 5);
-            this._ctx.lineTo(this._player.x-15,(this._player.y - 10) + 50);
-            this._ctx.lineTo(this._player.x-25,(this._player.y - 10) + 50);
-            this._ctx.lineTo(this._player.x-40,(this._player.y - 10) + 70);
-            this._ctx.lineTo(this._player.x+18,(this._player.y - 10) + 70);
-            this._ctx.lineTo(this._player.x+18,(this._player.y - 10) + 80);
-            this._ctx.lineTo(this._player.x+22,(this._player.y - 10) + 80);
-            this._ctx.lineTo(this._player.x+22,(this._player.y - 10) + 70);
-            this._ctx.lineTo(this._player.x+80,(this._player.y - 10) + 70);
-            this._ctx.lineTo(this._player.x+65,(this._player.y - 10) + 50);
-            this._ctx.lineTo(this._player.x+55,(this._player.y - 10) + 50);
-            this._ctx.lineTo(this._player.x+22,this._player.y - 5);
-            this._ctx.lineTo(this._player.x+17,this._player.y - 5);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.fillStyle = "#06030B";
-            this._ctx.fill();
-
-            this._ctx.beginPath();
-            this._ctx.moveTo(this._player.x,this._player.y + 20);
-            this._ctx.lineTo(this._player.x,this._player.y + 60);
-            this._ctx.quadraticCurveTo(this._player.x + 5, this._player.y+ 60 + 4, this._player.x + 10, this._player.y + 60);
-            this._ctx.quadraticCurveTo(this._player.x + 20, this._player.y+ 60 + 8, this._player.x + 30, this._player.y + 60);
-            this._ctx.quadraticCurveTo(this._player.x + 35, this._player.y+ 60 + 4, this._player.x + 40, this._player.y + 60);
-            this._ctx.lineTo(this._player.x+40,this._player.y + 20);
-            this._ctx.lineTo(this._player.x+25,this._player.y + 20);
-            this._ctx.lineTo(this._player.x+25,this._player.y);
-            this._ctx.lineTo(this._player.x+15,this._player.y);
-            this._ctx.lineTo(this._player.x+15,this._player.y + 20);
-            this._ctx.lineTo(this._player.x-1.75,this._player.y + 20);
-            this._ctx.strokeStyle = "white";
-            this._ctx.lineWidth = 4;
-            this._ctx.stroke();
-            this._ctx.fillStyle = "#0A0710";
-            this._ctx.fill();
-            this._ctx.restore();
-
-            if (this._player.shield > 0 && this._player.shieldOn == 1){
-                this._ctx.save();
-                this._ctx.globalAlpha = this._player.shield > 50 ? 1 : this._player.shield > 30 ? 0.1 : 0.05;
-                this._ctx.beginPath();
-                this._ctx.shadowBlur = 5;
-                this._ctx.shadowColor = "yellow";
-                this._ctx.moveTo(this._player.x - 15,this._player.y - 30);
-                this._ctx.lineTo(this._player.x - 18,this._player.y - 28);
-                this._ctx.lineTo(this._player.x + 63,this._player.y - 28);
-                this._ctx.lineTo(this._player.x + 60,this._player.y - 30);
-                this._ctx.lineTo(this._player.x - 16,this._player.y - 30);
-                this._ctx.strokeStyle = "white";
-                this._ctx.lineWidth = 4;
-                this._ctx.stroke();
-                this._ctx.fillStyle = "white";
-                this._ctx.fill();
-                this._ctx.restore();
-            }
+            this._player.render(this._ctx);
 
             if (this._player.deathDelay < 75){
                 this._particles.renderShipExplosions(
