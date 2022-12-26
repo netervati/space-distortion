@@ -2,6 +2,7 @@ type Position = { x: number; y: number };
 type AsteroidStructure = Position & { speed: number };
 type ADPStructure = Position & { life: number };
 type CometStructure = Position & { trail: number; trailSwitch: number };
+type GammaState = 'dead' | 'starting' | 'expanding';
 
 export default class Hazards {
     asteroid: AsteroidStructure[];
@@ -14,6 +15,12 @@ export default class Hazards {
     cometSummon: number;
     cometSummonBasis: number;
     cometSpeedFactor: number;
+    gammaRaySummon: number;
+    gammaRayX: number;
+    gammaRayInitialTransition: number;
+    gammaRayExpansion: number;
+    gammaRayDissipate: number;
+    gammaRayParticleSpread: number;
 
     constructor() {
         this.asteroid = [];
@@ -48,6 +55,12 @@ export default class Hazards {
         this.cometSummon = 400;
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
+        this.gammaRaySummon = 600;
+        this.gammaRayX = 0;
+        this.gammaRayInitialTransition = 0;
+        this.gammaRayExpansion = 0;
+        this.gammaRayDissipate = 0;
+        this.gammaRayParticleSpread = 200;
     }
 
     spawnAsteroid(
@@ -121,6 +134,65 @@ export default class Hazards {
         }
 
         return activeComet;
+    }
+
+    updateGammaRay(
+        canvasHeight: number,
+        canvasWidth: number,
+        distance: number,
+    ): GammaState {
+        let gammaState: GammaState = 'dead';
+
+        if (this.gammaRaySummon > 0) {
+            this.gammaRaySummon--;
+
+            return gammaState;
+        }
+
+        if (this.gammaRayDissipate != 0) {
+            this.gammaRayDissipate -= 5;
+            if (this.gammaRayDissipate <= 0) {
+                if (distance < 4900) {
+                    this.gammaRaySummon = 600;
+                    this.gammaRayX = 0;
+                }
+            }
+
+            return gammaState;
+        }
+
+        if (this.gammaRayExpansion === 0) {
+            if (distance < 4900) {
+                if (this.gammaRayInitialTransition < canvasHeight + 5000) {
+                    if (this.gammaRayX === 0) {
+                        this.gammaRayX =
+                            Math.floor(Math.random() * (canvasWidth - 200)) +
+                            100;
+                    }
+                    this.gammaRayInitialTransition += 30;
+                } else {
+                    this.gammaRayInitialTransition = 0;
+                    this.gammaRayExpansion++;
+                    gammaState = 'starting';
+
+                    return gammaState;
+                }
+            }
+
+            return gammaState;
+        }
+
+        if (this.gammaRayExpansion < 125) {
+            this.gammaRayExpansion++;
+            gammaState = 'expanding';
+
+            return gammaState;
+        }
+
+        this.gammaRayDissipate = 50;
+        this.gammaRayExpansion = 0;
+
+        return gammaState;
     }
 
     updateDeathParticles() {
@@ -236,6 +308,24 @@ export default class Hazards {
         return collided;
     }
 
+    collideWithGammaRay(playerX: number): boolean {
+        if (
+            playerX - 2 <= this.gammaRayX - this.gammaRayExpansion &&
+            this.gammaRayX - this.gammaRayExpansion <= playerX + 40
+        ) {
+            return true;
+        }
+
+        if (
+            playerX - 2 >= this.gammaRayX - this.gammaRayExpansion &&
+            playerX - 2 <= this.gammaRayX + this.gammaRayExpansion / 2
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
     reset(): void {
         this.asteroid = [];
         this.asteroidSummon = 300;
@@ -251,6 +341,12 @@ export default class Hazards {
         this.cometSummon = 400;
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
+        this.gammaRaySummon = 600;
+        this.gammaRayX = 0;
+        this.gammaRayInitialTransition = 0;
+        this.gammaRayExpansion = 0;
+        this.gammaRayDissipate = 0;
+        this.gammaRayParticleSpread = 200;
     }
 
     render(ctx: CanvasRenderingContext2D, canvasHeight: number): void {
@@ -342,6 +438,63 @@ export default class Hazards {
             ctx.stroke();
             ctx.fillStyle = 'white';
             ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    renderGammaRay(ctx: CanvasRenderingContext2D, canvasHeight: number) {
+        if (this.gammaRayInitialTransition > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.moveTo(this.gammaRayX, canvasHeight + 5000);
+
+            const moveToEnd =
+                this.gammaRayInitialTransition > 0
+                    ? canvasHeight + 5000 - this.gammaRayInitialTransition
+                    : 0;
+
+            ctx.lineTo(this.gammaRayX, moveToEnd);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        if (this.gammaRayExpansion > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(
+                this.gammaRayX - this.gammaRayExpansion,
+                0,
+                this.gammaRayExpansion + this.gammaRayExpansion / 2,
+                canvasHeight,
+            );
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        if (this.gammaRayDissipate > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(
+                this.gammaRayX - this.gammaRayDissipate,
+                0,
+                this.gammaRayDissipate + this.gammaRayDissipate / 2,
+                canvasHeight,
+            );
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
             ctx.restore();
         }
     }

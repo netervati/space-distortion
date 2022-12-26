@@ -32,6 +32,12 @@ var Hazards = /** @class */ (function () {
         this.cometSummon = 400;
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
+        this.gammaRaySummon = 600;
+        this.gammaRayX = 0;
+        this.gammaRayInitialTransition = 0;
+        this.gammaRayExpansion = 0;
+        this.gammaRayDissipate = 0;
+        this.gammaRayParticleSpread = 200;
     }
     Hazards.prototype.spawnAsteroid = function (canvasWidth, distance, playerX) {
         if (distance < 4900) {
@@ -90,6 +96,50 @@ var Hazards = /** @class */ (function () {
             }
         }
         return activeComet;
+    };
+    Hazards.prototype.updateGammaRay = function (canvasHeight, canvasWidth, distance) {
+        var gammaState = 'dead';
+        if (this.gammaRaySummon > 0) {
+            this.gammaRaySummon--;
+            return gammaState;
+        }
+        if (this.gammaRayDissipate != 0) {
+            this.gammaRayDissipate -= 5;
+            if (this.gammaRayDissipate <= 0) {
+                if (distance < 4900) {
+                    this.gammaRaySummon = 600;
+                    this.gammaRayX = 0;
+                }
+            }
+            return gammaState;
+        }
+        if (this.gammaRayExpansion === 0) {
+            if (distance < 4900) {
+                if (this.gammaRayInitialTransition < canvasHeight + 5000) {
+                    if (this.gammaRayX === 0) {
+                        this.gammaRayX =
+                            Math.floor(Math.random() * (canvasWidth - 200)) +
+                                100;
+                    }
+                    this.gammaRayInitialTransition += 30;
+                }
+                else {
+                    this.gammaRayInitialTransition = 0;
+                    this.gammaRayExpansion++;
+                    gammaState = 'starting';
+                    return gammaState;
+                }
+            }
+            return gammaState;
+        }
+        if (this.gammaRayExpansion < 125) {
+            this.gammaRayExpansion++;
+            gammaState = 'expanding';
+            return gammaState;
+        }
+        this.gammaRayDissipate = 50;
+        this.gammaRayExpansion = 0;
+        return gammaState;
     };
     Hazards.prototype.updateDeathParticles = function () {
         if (this.asteroidDeathParticles.length > 0) {
@@ -169,6 +219,17 @@ var Hazards = /** @class */ (function () {
         }
         return collided;
     };
+    Hazards.prototype.collideWithGammaRay = function (playerX) {
+        if (playerX - 2 <= this.gammaRayX - this.gammaRayExpansion &&
+            this.gammaRayX - this.gammaRayExpansion <= playerX + 40) {
+            return true;
+        }
+        if (playerX - 2 >= this.gammaRayX - this.gammaRayExpansion &&
+            playerX - 2 <= this.gammaRayX + this.gammaRayExpansion / 2) {
+            return true;
+        }
+        return false;
+    };
     Hazards.prototype.reset = function () {
         this.asteroid = [];
         this.asteroidSummon = 300;
@@ -184,6 +245,12 @@ var Hazards = /** @class */ (function () {
         this.cometSummon = 400;
         this.cometSummonBasis = 400;
         this.cometSpeedFactor = 12;
+        this.gammaRaySummon = 600;
+        this.gammaRayX = 0;
+        this.gammaRayInitialTransition = 0;
+        this.gammaRayExpansion = 0;
+        this.gammaRayDissipate = 0;
+        this.gammaRayParticleSpread = 200;
     };
     Hazards.prototype.render = function (ctx, canvasHeight) {
         var _this = this;
@@ -233,6 +300,47 @@ var Hazards = /** @class */ (function () {
             ctx.stroke();
             ctx.fillStyle = 'white';
             ctx.fill();
+            ctx.restore();
+        }
+    };
+    Hazards.prototype.renderGammaRay = function (ctx, canvasHeight) {
+        if (this.gammaRayInitialTransition > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.moveTo(this.gammaRayX, canvasHeight + 5000);
+            var moveToEnd = this.gammaRayInitialTransition > 0
+                ? canvasHeight + 5000 - this.gammaRayInitialTransition
+                : 0;
+            ctx.lineTo(this.gammaRayX, moveToEnd);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+        if (this.gammaRayExpansion > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(this.gammaRayX - this.gammaRayExpansion, 0, this.gammaRayExpansion + this.gammaRayExpansion / 2, canvasHeight);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.restore();
+        }
+        if (this.gammaRayDissipate > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'green';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(this.gammaRayX - this.gammaRayDissipate, 0, this.gammaRayDissipate + this.gammaRayDissipate / 2, canvasHeight);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
             ctx.restore();
         }
     };
