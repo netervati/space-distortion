@@ -241,8 +241,8 @@ class Netervati{
             this._cutscenes.updateWarningCutscene();
         } else if (this._cutscenes.init >= 600 && this._gameStart === 0) {
             this._gameStart = 1;
-            SFX["bgm"].play();
-            SFX["bgm"].loop = true;
+            SFX.bgm.play();
+            SFX.bgm.loop = true;
         }
 
         if (this._allowStart === 1 && this._gameStart === 0) {
