@@ -2,6 +2,7 @@ import Netervati from './core.js';
 import KeyboardController from './function.js';
 
 const appGame = new Netervati();
+appGame.update();
 
 KeyboardController({
     'KeyS': () => {
