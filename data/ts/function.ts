@@ -1,10 +1,10 @@
 function KeyboardController(
-    keys: { [key: string]: () => void },
+    keys: { [key: string]: () => Promise<void> | void },
     repeat: number,
 ): void {
     let timers: { [key: string]: undefined | number } = {};
 
-    document.onkeydown = (event: KeyboardEvent): boolean => {
+    document.onkeydown = async (event: KeyboardEvent): Promise<boolean> => {
         const key: string = (event || window.event).code;
 
         if (!(key in keys)) {
@@ -13,7 +13,7 @@ function KeyboardController(
 
         if (!(key in timers)) {
             timers[key] = undefined;
-            keys[key]();
+            await keys[key]();
 
             if (repeat !== 0) {
                 timers[key] = setInterval(keys[key], repeat);
