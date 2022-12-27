@@ -1,4 +1,4 @@
-import { IMG } from './assets';
+import { IMG } from './assets.js';
 var Cutscenes = /** @class */ (function () {
     function Cutscenes() {
         this.load = 0;
