@@ -22,6 +22,9 @@ export default class Cutscenes {
         gameOver: number,
         playerDead: number,
     ): void {
+        const centerWidth = canvasWidth / 2;
+        const centerHeight = canvasHeight / 2;
+
         if (playerDead === 1) {
             ctx.drawImage(
                 IMG.restart,
@@ -29,8 +32,8 @@ export default class Cutscenes {
                 0,
                 112,
                 9,
-                canvasWidth / 2 - 112,
-                canvasHeight / 2 - 9,
+                centerWidth - 112,
+                centerHeight - 9,
                 218,
                 16,
             );
@@ -43,8 +46,8 @@ export default class Cutscenes {
                 0,
                 186,
                 22,
-                canvasWidth / 2 - 186,
-                canvasHeight / 2 - 50,
+                centerWidth - 186,
+                centerHeight - 50,
                 372,
                 44,
             );
@@ -54,8 +57,8 @@ export default class Cutscenes {
                 0,
                 125,
                 9,
-                canvasWidth / 2 - 125,
-                canvasHeight / 2 + 10,
+                centerWidth - 125,
+                centerHeight + 10,
                 250,
                 16,
             );
@@ -70,8 +73,8 @@ export default class Cutscenes {
                 0,
                 56,
                 18,
-                canvasWidth / 2 - 56,
-                canvasHeight / 2 - 9,
+                centerWidth - 56,
+                centerHeight - 9,
                 112,
                 40,
             );
@@ -104,8 +107,8 @@ export default class Cutscenes {
                 0,
                 9 * (frameCount + 1),
                 26,
-                canvasWidth / 2 - 125,
-                canvasHeight / 2 - 13,
+                centerWidth - 125,
+                centerHeight - 13,
                 dWidth(frameCount),
                 40,
             );
@@ -131,8 +134,8 @@ export default class Cutscenes {
                 0,
                 9 * (frameCountB + 1),
                 26,
-                canvasWidth / 2 - 141,
-                canvasHeight / 2 - 13,
+                centerWidth - 141,
+                centerHeight - 13,
                 dWidth(frameCountB),
                 40,
             );
@@ -158,8 +161,8 @@ export default class Cutscenes {
                 0,
                 9 * (frameCountC + 1),
                 26,
-                canvasWidth / 2 - 125,
-                canvasHeight / 2 - 13,
+                centerWidth - 125,
+                centerHeight - 13,
                 dWidth(frameCountC),
                 40,
             );
@@ -186,8 +189,8 @@ export default class Cutscenes {
                     0,
                     9 * (frameCountD + 1),
                     26,
-                    canvasWidth / 2 - 125,
-                    canvasHeight / 2 - 13,
+                    centerWidth - 125,
+                    centerHeight - 13,
                     dWidth(frameCountD),
                     40,
                 );
@@ -200,8 +203,8 @@ export default class Cutscenes {
                     0,
                     120,
                     26,
-                    canvasWidth / 2 - 120,
-                    canvasHeight / 2 - 9,
+                    centerWidth - 120,
+                    centerHeight - 9,
                     240,
                     40,
                 );

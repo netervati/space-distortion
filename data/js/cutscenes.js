@@ -1,4 +1,4 @@
-import { IMG } from './assets.js';
+import { IMG } from './assets';
 var Cutscenes = /** @class */ (function () {
     function Cutscenes() {
         this.load = 0;
@@ -8,17 +8,19 @@ var Cutscenes = /** @class */ (function () {
         this.ending = 0;
     }
     Cutscenes.prototype.render = function (ctx, canvasWidth, canvasHeight, gameOver, playerDead) {
+        var centerWidth = canvasWidth / 2;
+        var centerHeight = canvasHeight / 2;
         if (playerDead === 1) {
-            ctx.drawImage(IMG.restart, 0, 0, 112, 9, canvasWidth / 2 - 112, canvasHeight / 2 - 9, 218, 16);
+            ctx.drawImage(IMG.restart, 0, 0, 112, 9, centerWidth - 112, centerHeight - 9, 218, 16);
         }
         if (this.load === 0) {
-            ctx.drawImage(IMG.title, 0, 0, 186, 22, canvasWidth / 2 - 186, canvasHeight / 2 - 50, 372, 44);
-            ctx.drawImage(IMG.begin, 0, 0, 125, 9, canvasWidth / 2 - 125, canvasHeight / 2 + 10, 250, 16);
+            ctx.drawImage(IMG.title, 0, 0, 186, 22, centerWidth - 186, centerHeight - 50, 372, 44);
+            ctx.drawImage(IMG.begin, 0, 0, 125, 9, centerWidth - 125, centerHeight + 10, 250, 16);
         }
         if (this.init >= 100 && this.init < 188) {
             ctx.save();
             ctx.globalAlpha = this.warningCurAlpha;
-            ctx.drawImage(IMG.warning, 0, 0, 56, 18, canvasWidth / 2 - 56, canvasHeight / 2 - 9, 112, 40);
+            ctx.drawImage(IMG.warning, 0, 0, 56, 18, centerWidth - 56, centerHeight - 9, 112, 40);
             ctx.restore();
         }
         var dWidth = function (frameCount) {
@@ -37,7 +39,7 @@ var Cutscenes = /** @class */ (function () {
             else {
                 frameCount = 258;
             }
-            ctx.drawImage(IMG.introa, 0, 0, 9 * (frameCount + 1), 26, canvasWidth / 2 - 125, canvasHeight / 2 - 13, dWidth(frameCount), 40);
+            ctx.drawImage(IMG.introa, 0, 0, 9 * (frameCount + 1), 26, centerWidth - 125, centerHeight - 13, dWidth(frameCount), 40);
         }
         if (this.init >= 360 && this.init < 470) {
             var frameCountB = 0;
@@ -51,7 +53,7 @@ var Cutscenes = /** @class */ (function () {
             else {
                 frameCountB = 470;
             }
-            ctx.drawImage(IMG.introb, 0, 0, 9 * (frameCountB + 1), 26, canvasWidth / 2 - 141, canvasHeight / 2 - 13, dWidth(frameCountB), 40);
+            ctx.drawImage(IMG.introb, 0, 0, 9 * (frameCountB + 1), 26, centerWidth - 141, centerHeight - 13, dWidth(frameCountB), 40);
         }
         if (this.init >= 480 && this.init < 600) {
             var frameCountC = 0;
@@ -65,7 +67,7 @@ var Cutscenes = /** @class */ (function () {
             else {
                 frameCountC = 600;
             }
-            ctx.drawImage(IMG.introc, 0, 0, 9 * (frameCountC + 1), 26, canvasWidth / 2 - 125, canvasHeight / 2 - 13, dWidth(frameCountC), 40);
+            ctx.drawImage(IMG.introc, 0, 0, 9 * (frameCountC + 1), 26, centerWidth - 125, centerHeight - 13, dWidth(frameCountC), 40);
         }
         if (gameOver === 1) {
             if (this.ending < 100) {
@@ -80,10 +82,10 @@ var Cutscenes = /** @class */ (function () {
                 else {
                     frameCountD = 100;
                 }
-                ctx.drawImage(IMG.end, 0, 0, 9 * (frameCountD + 1), 26, canvasWidth / 2 - 125, canvasHeight / 2 - 13, dWidth(frameCountD), 40);
+                ctx.drawImage(IMG.end, 0, 0, 9 * (frameCountD + 1), 26, centerWidth - 125, centerHeight - 13, dWidth(frameCountD), 40);
             }
             if (this.ending >= 150) {
-                ctx.drawImage(IMG.thanks, 0, 0, 120, 26, canvasWidth / 2 - 120, canvasHeight / 2 - 9, 240, 40);
+                ctx.drawImage(IMG.thanks, 0, 0, 120, 26, centerWidth - 120, centerHeight - 9, 240, 40);
             }
         }
     };
