@@ -37,11 +37,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import Netervati from './core.js';
 import KeyboardController from './function.js';
 await (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var appGame;
+    var appGame, lastTime, frameRate, mainLoop;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 appGame = new Netervati();
+                lastTime = 0;
+                frameRate = 1000 / 24;
+                mainLoop = function () { return __awaiter(void 0, void 0, void 0, function () {
+                    var deltaTime;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (lastTime === 0) {
+                                    lastTime = performance.now();
+                                }
+                                deltaTime = frameRate * (performance.now() - lastTime);
+                                appGame.render();
+                                if (!(deltaTime >= 1000)) return [3 /*break*/, 2];
+                                lastTime = performance.now();
+                                return [4 /*yield*/, appGame.update()];
+                            case 1:
+                                _a.sent();
+                                _a.label = 2;
+                            case 2: return [4 /*yield*/, new Promise(function (resolve) { return requestAnimationFrame(resolve); }).then(mainLoop)];
+                            case 3:
+                                _a.sent();
+                                return [2 /*return*/];
+                        }
+                    });
+                }); };
                 KeyboardController({
                     KeyS: function () { return __awaiter(void 0, void 0, void 0, function () {
                         return __generator(this, function (_a) {
@@ -93,7 +118,7 @@ await (function () { return __awaiter(void 0, void 0, void 0, function () {
                         }
                     },
                 }, 12);
-                return [4 /*yield*/, appGame.update()];
+                return [4 /*yield*/, mainLoop()];
             case 1:
                 _a.sent();
                 return [2 /*return*/];

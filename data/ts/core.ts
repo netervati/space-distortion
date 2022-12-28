@@ -105,8 +105,6 @@ class Netervati {
         this._wave.update();
         this._particles.update(this._canvas.height, this._player.x);
 
-        this.render();
-
         if (this._gameStart === 1 && this._gameOver === 0) {
             if (this._player.shieldOn == 0) {
                 if (this._player.shield < 100) {
@@ -283,10 +281,6 @@ class Netervati {
                 this._cutscenes.load = 1;
             }
         }
-
-        setTimeout(async (): Promise<void> => {
-            await this.update();
-        }, 24);
     }
 
     render(): void {

@@ -117,13 +117,11 @@ var Netervati = /** @class */ (function () {
     Netervati.prototype.update = function () {
         return __awaiter(this, void 0, void 0, function () {
             var proceedHazardUpdate, adjustHazards, spliceAsteroid, _i, _a, asteroid, _b, blocked, collided, activeComet, collided, gammaState, collided;
-            var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         this._wave.update();
                         this._particles.update(this._canvas.height, this._player.x);
-                        this.render();
                         if (!(this._gameStart === 1 && this._gameOver === 0)) return [3 /*break*/, 13];
                         if (this._player.shieldOn == 0) {
                             if (this._player.shield < 100) {
@@ -269,16 +267,6 @@ var Netervati = /** @class */ (function () {
                                 this._cutscenes.load = 1;
                             }
                         }
-                        setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, this.update()];
-                                    case 1:
-                                        _a.sent();
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); }, 24);
                         return [2 /*return*/];
                 }
             });
