@@ -3,6 +3,28 @@ import KeyboardController from './function';
 
 await (async () => {
     const appGame: Netervati = new Netervati();
+    let lastTime = 0;
+    const frameRate = 1000 / 24;
+
+    const mainLoop = async (): Promise<void> => {
+        if (lastTime === 0) {
+            lastTime = performance.now();
+        }
+
+        const deltaTime = frameRate * (performance.now() - lastTime);
+
+        appGame.render();
+
+        if (deltaTime >= 1000) {
+            lastTime = performance.now();
+
+            await appGame.update();
+        }
+
+        await new Promise((resolve) => requestAnimationFrame(resolve)).then(
+            mainLoop,
+        );
+    };
 
     KeyboardController(
         {
@@ -38,5 +60,5 @@ await (async () => {
         12,
     );
 
-    await appGame.update();
+    await mainLoop();
 })();
